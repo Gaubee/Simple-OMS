@@ -1,0 +1,24 @@
+<md-card>
+  <md-grid-list md-card-image class="headers" cols="6" rowHeight="48px">
+    <md-grid-tile><md-checkbox>全选</md-checkbox></md-grid-tile>
+    <md-grid-tile>顾客</md-grid-tile>
+    <md-grid-tile>联系方式</md-grid-tile>
+    <md-grid-tile>日期</md-grid-tile>
+    <md-grid-tile>总价</md-grid-tile>
+    <md-grid-tile>操作</md-grid-tile>
+  </md-grid-list>
+  <md-grid-list md-card-image class="item" *ngFor="let order of order_list" cols="6" rowHeight="32px">
+    <md-grid-tile><md-checkbox></md-checkbox></md-grid-tile>
+    <md-grid-tile>{{order.customer.name}}</md-grid-tile>
+    <md-grid-tile>{{order.customer.phone}}</md-grid-tile>
+    <md-grid-tile>{{order.create_time|date:"yyyy-MM-dd"}}</md-grid-tile>
+    <md-grid-tile>{{order.order_price|fixed}}元</md-grid-tile>
+    <md-grid-tile>
+      <button md-icon-button md-tooltip="编辑" tooltip-position="before" (click)="goEditOrder(order)"><md-icon>edit</md-icon></button>
+      <button md-icon-button md-tooltip="删除" tooltip-position="after" (click)="deleteOrder(order)"><md-icon>delete</md-icon></button>
+    </md-grid-tile>
+  </md-grid-list>
+  <md-card-footer>
+    <md-progress-bar *ngIf="is_loading_list_data" mode="indeterminate"></md-progress-bar>
+  </md-card-footer>
+</md-card>

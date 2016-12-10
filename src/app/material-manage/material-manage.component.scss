@@ -1,0 +1,17 @@
+@import '~@angular/material/core/theming/all-theme';
+@mixin material-manage-theme($theme) {
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    md-grid-list.headers {
+        background-color: md-color($primary);
+        color: md-color($primary, default-contrast);
+    }
+    md-grid-list.item {
+        &:hover {
+            background: md-color($accent,0.2);
+        }
+    }
+}

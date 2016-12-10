@@ -1,0 +1,12 @@
+<md-card>
+  <p md-line>
+    settings works!
+  </p>
+  <md-slide-toggle [(ngModel)]="_app.isDarkTheme">
+    夜间模式
+  </md-slide-toggle>
+</md-card>
+<md-card>
+  <p md-line> 当前版本{{_app.version}}。 </p>
+  <button md-raised-button>检查更新</button>
+</md-card>

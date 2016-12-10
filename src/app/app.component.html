@@ -1,0 +1,53 @@
+<md-sidenav-layout [class.m2app-dark]="isDarkTheme">
+
+  <md-sidenav #sidenav mode="side" class="app-sidenav" mode="over" opened=false>
+    <!--Sidenav-->
+    <md-nav-list>
+      <a md-ripple md-list-item [routerLink]=" ['./orders']" (click)="sidenav.close()">
+        <md-icon class="md-24">shopping_cart</md-icon> 订单管理
+      </a>
+      <a md-ripple md-list-item [routerLink]=" ['./materials']" (click)="sidenav.close()">
+        <md-icon class="md-24">gavel</md-icon> 材料管理
+      </a>
+      <a md-ripple md-list-item [routerLink]=" ['./customers']" (click)="sidenav.close()">
+        <md-icon class="md-24">people</md-icon> 顾客管理
+      </a>
+      <a md-ripple md-list-item [routerLink]=" ['./settings']" (click)="sidenav.close()">
+        <md-icon class="md-24">settings</md-icon> 设置
+      </a>
+    </md-nav-list>
+  </md-sidenav>
+
+  <md-toolbar color="primary">
+    <!--<button class="app-icon-button" (click)="sidenav.toggle()">
+      <i class="material-icons app-toolbar-menu">menu</i>
+    </button>-->
+    <button md-icon-button (click)="sidenav.toggle()">
+        <md-icon class="md-24">menu</md-icon>
+    </button> {{toolbar_title}}
+
+    <!--<span class="app-toolbar-filler"></span>-->
+    <!--<button md-button (click)="isDarkTheme = !isDarkTheme">TOGGLE DARK THEME</button>-->
+
+    <md-progress-bar *ngIf="loading_bar.show" class="app-progress" [mode]="loading_bar.mode" [value]="loading_bar.value" [bufferValue]="loading_bar.bufferValue"></md-progress-bar>
+  </md-toolbar>
+
+  <div class="app-content">
+    <router-outlet></router-outlet>
+  </div>
+
+</md-sidenav-layout>
+
+<span *ngIf="fab_handle.enabled" (click)="fab_handle.click_event()" class="app-action" md-tooltip={{fab_handle.button_tooltip}}
+  tooltip-position="above" [class.m2app-dark]="isDarkTheme">
+  <button md-fab [disabled]="fab_handle.disabled"><md-icon>{{fab_handle.button_text}}</md-icon></button>
+</span>
+
+<footer>
+  <p style="text-align:center;">版权所有 &copy; 游都科技 <a [href]="url">@Youdob</a></p>
+  <!--<div>
+    <a [href]="url">
+      <img [src]="angularclassLogo" width="25%">
+    </a>
+  </div>-->
+</footer>

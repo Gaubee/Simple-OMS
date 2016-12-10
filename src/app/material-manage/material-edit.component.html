@@ -1,0 +1,7 @@
+<md-card>
+    <md-input placeholder="材料名称" [(ngModel)]="material_data.name" (input)="onChangePro()" (change)="onChangePro()"></md-input>
+    <br>
+    <md-input placeholder="材料价格" align="end" type="number" min=0 [(ngModel)]="material_data.price" (input)="onChangePro()" (change)="onChangePro()">
+        <span md-suffix>￥/米</span>
+    </md-input>
+</md-card>

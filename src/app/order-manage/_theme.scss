@@ -1,0 +1,7 @@
+@import "./order-manage.component";
+@import "./order-edit.component";
+
+@mixin orders-theme($theme){
+    @include order-manage-theme($theme);
+    @include order-edit-theme($theme);
+} 

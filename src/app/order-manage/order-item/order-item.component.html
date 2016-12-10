@@ -1,0 +1,57 @@
+<md-card>
+  <md-grid-list cols=2 rowHeight="65px" class="order-detail">
+    <md-grid-tile>
+      <md-select class="item-left-with-space" required placeholder="类目" [(ngModel)]="order_node.type_id" (ngModelChange)="setObTypeId($event)">
+        <md-option *ngFor="let type_option of type_options" [value]="type_option.id"> {{ type_option.value }} </md-option>
+      </md-select>
+    </md-grid-tile>
+    <md-grid-tile>
+      <md-select class="item-right-with-space" required placeholder="材料" [(ngModel)]="order_node.material_id" (ngModelChange)="setObMaterialId($event)">
+        <md-option *ngFor="let material_option of material_options" [value]="material_option.id"> {{ material_option.name }} </md-option>
+      </md-select>
+    </md-grid-tile>
+    <md-grid-tile>
+      <md-input class="item-left-with-space" placeholder="加工备注" [(ngModel)]="order_node.machining_remark"></md-input>
+    </md-grid-tile>
+    <md-grid-tile>
+      <md-input class="item-right-with-space" placeholder="加工费用" type=number step=0.1 min=0 [(ngModel)]="order_node.machining_price"
+        (ngModelChange)="computeTotalPrice()">
+        <span md-suffix>元</span>
+      </md-input>
+    </md-grid-tile>
+  </md-grid-list>
+  <br>
+  <md-divider></md-divider>
+  <br>
+  <br>
+  <md-card-title>
+    <span class="card-title-text">尺寸列表</span>
+    <button md-icon-button class="card-title-action" (click)="addSizeItem()" md-tooltip="添加尺寸" tooltip-position="after">
+      <md-icon>add_circle_outline</md-icon>
+    </button>
+  </md-card-title>
+  <md-grid-list *ngFor="let size_item of order_node.size_list;let i = index" cols=4 rowHeight="65px" class="order-size-list">
+    <md-grid-tile>
+      <md-input placeholder="长度" align="end" type="number" step=0.1 min=0 [(ngModel)]="size_item.width">
+        <span md-suffix>cm</span>
+      </md-input>
+    </md-grid-tile>
+    <md-grid-tile>
+      <md-input placeholder="宽度" align="end" type="number" step=0.1 min=0 [(ngModel)]="size_item.height">
+        <span md-prefix>&nbsp;×&nbsp;</span>
+        <span md-suffix>cm</span>
+      </md-input>
+    </md-grid-tile>
+    <md-grid-tile>
+      = {{computeSizeArea(i)|fixed:4}} cm²
+    </md-grid-tile>
+    <md-grid-tile>
+      <button md-icon-button (click)="removeSizeItem(i)"><md-icon>remove_circle_outline</md-icon></button>
+    </md-grid-tile>
+  </md-grid-list>
+  <br>
+  <md-divider></md-divider>
+  <br>
+  <br>
+  <md-card-title>合计价格：{{order_node.total_price|fixed}}</md-card-title>
+</md-card>

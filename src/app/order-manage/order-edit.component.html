@@ -1,0 +1,61 @@
+<div class="item-warp">
+    <div class="item-1-3">
+        <md-card class="order-detail">
+            <md-card-title-group>
+                <md-card-title>订单基本信息</md-card-title>
+                <md-card-subtitle>* 客户相关的信息在添加不同类目或者材料的子订单时是共享的。</md-card-subtitle>
+            </md-card-title-group>
+            <my-date-picker [options]="myDatePickerOptions" (dateChanged)="onDateChanged($event)" [selDate]="showDate"></my-date-picker>
+            <!--[selectedDate]="selectedDate"-->
+            <br>
+            <md-grid-list cols=2 rowHeight="65px">
+                <md-grid-tile colspan=1>
+                    <md-input class="customer-name" required placeholder="客户姓名" [(ngModel)]="order.customer.name"></md-input>
+                </md-grid-tile>
+                <md-grid-tile colspan=1>
+                    <md-input class="customer-phone" required placeholder="联系号码" [(ngModel)]="order.customer.phone"></md-input>
+                </md-grid-tile>
+                <md-grid-tile colspan=2>
+                    <md-input class="customer-address" placeholder="联系地址" [(ngModel)]="order.customer.address"></md-input>
+                </md-grid-tile>
+            </md-grid-list>
+            <md-textarea class="remark" placeholder="订单备注" [(ngModel)]="order.remark"></md-textarea>
+            <br>
+            <br>
+            <md-divider></md-divider>
+            <br>
+            <br>
+            <md-card-title>总计：{{order.order_price|fixed}}元</md-card-title>
+            <md-card-actions align="end">
+                <button md-raised-button color="primary">打印<md-icon>print</md-icon></button>
+            </md-card-actions>
+        </md-card>
+    </div>
+    <div class="item-2-3">
+
+        <md-card>
+            <md-card-title>
+                <span class="card-title-text">订单详细信息</span>
+                <button md-icon-button class="card-title-action" (click)="addOrderNode()" md-tooltip="添加子订单" tooltip-position="after">
+                    <md-icon style="vertical-align: middle;">playlist_add</md-icon>
+                </button>
+            </md-card-title>
+            <md-tab-group md-card-image [(selectedIndex)]="activeTabIndex">
+                <md-tab *ngFor="let order_node of order.nodes; let i = index">
+                    <template md-tab-label>
+                        {{i+1}}. {{order_node.type?.value||'类目'}}：{{order_node.material?.name||'材料'}}
+                        <button md-icon-button>
+                            <md-icon style="vertical-align: middle;">close</md-icon>
+                        </button>
+                    </template>
+                    <app-order-item (on-total-price-change)="computeOrderPrice()" [order-node]="order_node" [focus]="i == activeTabIndex"></app-order-item>
+                </md-tab>
+            </md-tab-group>
+            <!--<app-order-item-list>
+                <div *ngFor="let order_node of order.nodes; let i = index">
+                    <app-order-item (on-total-price-change)="computeOrderPrice()" *ngIf="activeTabIndex == i" [order-node]="order_node"></app-order-item>
+                </div>
+            </app-order-item-list>-->
+        </md-card>
+    </div>
+</div>

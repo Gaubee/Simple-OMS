@@ -1,0 +1,24 @@
+<!--<md-sidenav class="md-sidenav-right md-whiteframe-4dp">
+  <md-toolbar class="md-theme-light">
+    <h1 class="md-toolbar-tools">Sidenav Right</h1>
+  </md-toolbar>
+  <content>
+    <form>
+      <md-input label="Test input" md-autofocus>
+      </md-input>
+    </form>
+  </content>
+</md-sidenav>-->
+<md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4">
+
+  <md-toolbar class="md-theme-indigo">
+    <h1 class="md-toolbar-tools">Sidenav Left xxx</h1>
+  </md-toolbar>
+    <button md-button ng-click="close()" class="md-primary" hide-gt-md>
+      Close Sidenav Left
+    </button>
+    <p hide show-gt-md>
+      This sidenav is locked open on your device. To go back to the default behavior, narrow your display.
+    </p>
+
+</md-sidenav>

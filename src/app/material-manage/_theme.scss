@@ -1,0 +1,7 @@
+@import "./material-manage.component";
+@import "./material-edit.component";
+
+@mixin materials-theme($theme){
+    @include material-manage-theme($theme);
+    @include material-add-theme($theme);
+} 
