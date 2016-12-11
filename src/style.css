@@ -5,3 +5,6 @@ md-tab-group>.md-tab-header>.md-tab-label{
 md-tab-group>.md-tab-header{
     overflow: auto!important;
 }
+.cursor-pointer{
+    cursor: pointer;
+}

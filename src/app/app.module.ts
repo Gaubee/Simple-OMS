@@ -27,8 +27,10 @@ import { SelectModule } from 'angular2-select';
 import { NavComponent } from './nav/nav.component';
 import { OrderManageComponent, OrderAddComponent, OrderUpdateComponent, FixedPipe, FocusDirective } from './order-manage/order-manage.component';
 import { OrderItemComponent, OrderItemListComponent } from './order-manage/order-item/order-item.component';
+import { OrderSelectCustomerComponent } from './order-manage/order-select-customer/order-select-customer.component';
 import { MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent } from './material-manage/material-manage.component';
 import { CustomerManageComponent } from './customer-manage/customer-manage.component';
+import { CustomerEditComponent } from './customer-manage/customer-edit/customer-edit.component';
 import { SettingsComponent } from './settings/settings.component';
 
 import { MaterialModule } from '@angular/material';
@@ -58,22 +60,21 @@ type StoreType = {
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
-    AppComponent,
-    DialogContent,
-    AboutComponent,
-    HomeComponent,
-    NoContentComponent,
-    XLarge,
+    AppComponent
+    , DialogContent
+    , AboutComponent
+    , HomeComponent
+    , NoContentComponent
+    , XLarge
 
-    NavComponent,
-    OrderManageComponent, OrderAddComponent, OrderUpdateComponent,
-    MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent,
-    CustomerManageComponent,
-    SettingsComponent,
+    , NavComponent
+    , OrderManageComponent, OrderAddComponent, OrderUpdateComponent, OrderSelectCustomerComponent
+    , MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent
+    , CustomerEditComponent, CustomerManageComponent
+    , SettingsComponent
 
-    FixedPipe, FocusDirective,
-    OrderItemComponent, OrderItemListComponent,
-
+    , FixedPipe, FocusDirective
+    , OrderItemComponent, OrderItemListComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -92,7 +93,7 @@ type StoreType = {
     OrderService,
     CustomerService,
   ],
-  entryComponents: [DialogContent],
+  entryComponents: [DialogContent, OrderSelectCustomerComponent],
 })
 export class AppModule {
   constructor(public appRef: ApplicationRef, public appState: AppState) { }

@@ -8,15 +8,15 @@
             <my-date-picker [options]="myDatePickerOptions" (dateChanged)="onDateChanged($event)" [selDate]="showDate"></my-date-picker>
             <!--[selectedDate]="selectedDate"-->
             <br>
-            <md-grid-list cols=2 rowHeight="65px">
+            <md-grid-list class="cursor-pointer" cols=2 rowHeight="65px" md-ripple md-ripple-focused=true (click)="openCustomerSelectDialog()">
                 <md-grid-tile colspan=1>
-                    <md-input class="customer-name" required placeholder="客户姓名" [(ngModel)]="order.customer.name"></md-input>
+                    <md-input class="customer-name" disabled required placeholder="客户姓名" [(ngModel)]="order.customer.name"></md-input>
                 </md-grid-tile>
                 <md-grid-tile colspan=1>
-                    <md-input class="customer-phone" required placeholder="联系号码" [(ngModel)]="order.customer.phone"></md-input>
+                    <md-input class="customer-phone" disabled required placeholder="联系号码" [(ngModel)]="order.customer.phone"></md-input>
                 </md-grid-tile>
                 <md-grid-tile colspan=2>
-                    <md-input class="customer-address" placeholder="联系地址" [(ngModel)]="order.customer.address"></md-input>
+                    <md-input class="customer-address" disabled placeholder="联系地址" [(ngModel)]="order.customer.address"></md-input>
                 </md-grid-tile>
             </md-grid-list>
             <md-textarea class="remark" placeholder="订单备注" [(ngModel)]="order.remark"></md-textarea>
@@ -27,7 +27,7 @@
             <br>
             <md-card-title>总计：{{order.order_price|fixed}}元</md-card-title>
             <md-card-actions align="end">
-                <button md-raised-button color="primary">打印<md-icon>print</md-icon></button>
+                <button md-raised-button color="primary"><md-icon>print</md-icon><span class="md-button-text">打印</span></button>
             </md-card-actions>
         </md-card>
     </div>

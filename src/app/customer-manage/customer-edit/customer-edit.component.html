@@ -1,0 +1,21 @@
+<md-card>
+  <md-grid-list cols=2 rowHeight="65px">
+    <md-grid-tile colspan=1>
+      <md-input class="customer-name" required placeholder="客户姓名 / 公司名称" [(ngModel)]="customer.name"></md-input>
+    </md-grid-tile>
+    <md-grid-tile colspan=1>
+      <md-input class="customer-phone" required placeholder="联系号码" [(ngModel)]="customer.phone"></md-input>
+    </md-grid-tile>
+    <md-grid-tile colspan=2>
+      <md-input class="customer-address" placeholder="联系地址" [(ngModel)]="customer.address"></md-input>
+    </md-grid-tile>
+  </md-grid-list>
+  <md-textarea placeholder="顾客备注" [(ngModel)]="customer.remark"></md-textarea>
+  <!--TODO：avatar 头像-->
+  <md-card-actions align="end" *ngIf="!is_uploading">
+    <button md-button color="primary" (click)="submitCustomer()"><md-icon>check</md-icon><span class="md-button-text">提交顾客资料</span></button>
+  </md-card-actions>
+  <md-card-footer *ngIf="is_uploading">
+    <md-progress-bar mode="indeterminate"></md-progress-bar>
+  </md-card-footer>
+</md-card>

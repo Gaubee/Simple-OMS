@@ -1,0 +1,51 @@
+@import '~@angular/material/core/theming/all-theme';
+@import '../var';
+md-card,
+md-input,
+md-textarea,
+[md-raised-button],
+[md-button],
+my-date-picker,
+md-select,
+md-option,
+h3,
+p,
+{
+    font-family: $md-font-family!important;
+}
+
+md-button {
+    .md-button-text {
+        display: inline-block;
+        line-height: 24px;
+    }
+    md-icon {
+        vertical-align: top!important;
+    }
+}
+
+.customer-card {
+    display: inline-block;
+    vertical-align: top;
+    width: 32%;
+    min-width: 345px;
+    box-sizing: border-box;
+}
+
+.remove-customer-confirm-dialog {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    // TODO:use theme
+    background-color: rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    vertical-align: top;
+    text-align: center;
+}
+
+.blur {
+    filter: blur(10px);
+    pointer-events: none;
+}

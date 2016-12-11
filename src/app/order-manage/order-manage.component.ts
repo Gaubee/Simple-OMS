@@ -20,6 +20,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { OrderService, Order, ORDER_DEFAULT } from './order.service';
 import { copy } from '../common';
 import { Subscription } from 'rxjs/Subscription';
+import { OrderSelectCustomerComponent } from './order-select-customer/order-select-customer.component'
 
 @Component({
   selector: 'app-order-manage',
@@ -170,6 +171,20 @@ class OrderEditBase {
   computeOrderPrice() {
     this.setOrderPrice(this.order.nodes.reduce((v, node) => node.total_price + v, 0));
   }
+
+  public dialog: MdDialog
+  customer_select_dialog: MdDialogRef<OrderSelectCustomerComponent>
+  openCustomerSelectDialog() {
+    console.log("OPEN!!")
+    this.customer_select_dialog = this.dialog.open(OrderSelectCustomerComponent, {
+      disableClose: true
+    });
+
+    this.customer_select_dialog.afterClosed().subscribe(result => {
+      console.log('result: ' + result);
+      this.customer_select_dialog = null;
+    });
+  }
 }
 
 
@@ -184,7 +199,8 @@ export class OrderAddComponent extends OrderEditBase implements OnInit, AfterVie
     public _app: AppComponent,
     private _order_service: OrderService,
     private _snackbar: MdSnackBar,
-    public ref: ElementRef
+    public ref: ElementRef,
+    public dialog: MdDialog
   ) {
     super();
   }
@@ -220,7 +236,8 @@ export class OrderUpdateComponent extends OrderEditBase implements OnInit {
     public _app: AppComponent,
     private route: ActivatedRoute,
     private _snackbar: MdSnackBar,
-    private _order_service: OrderService
+    private _order_service: OrderService,
+    public dialog: MdDialog
   ) {
     super();
   }

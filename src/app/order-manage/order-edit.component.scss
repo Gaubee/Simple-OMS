@@ -88,6 +88,15 @@ md-card-title {
     }
 }
 
+md-button {
+    .md-button-text {
+        display: inline-block;
+        line-height: 24px;
+    }
+    md-icon {
+        vertical-align: top!important;
+    }
+}
 @mixin order-edit-theme($theme) {
     $primary: map-get($theme, primary);
     $accent: map-get($theme, accent);
