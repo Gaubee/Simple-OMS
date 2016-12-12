@@ -127,6 +127,19 @@ export class OrderService {
             }
         });
     }
+    async getOrdersCount() {
+        const db = await this.db;
+
+        var t = db.transaction(["list"], "readonly");
+        var store = t.objectStore("list");
+        var cursor = store.count();
+        return new Promise<number>((resolve, reject) => {
+            cursor.onsuccess = function (e) {
+                resolve(cursor.result)
+            }
+            cursor.onerror = reject;
+        });
+    }
     async getOrders(start_index = 0, num = 10, dynamic_configuration: {
         is_stop?: boolean,
         DESC?: boolean

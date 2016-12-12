@@ -1,0 +1,19 @@
+{
+	"main": "index.js",
+	"name": "YOMS",
+	"productName": "YoudobOMS",
+	"description": "Youdob版权所有的订单管理系统",
+	"homepage": "http://movie.youdob.com",
+	"version": "2.0.3",
+	"author": "Gaubee",
+	"window": {
+		"fullscreen": false,
+		"min_width": 1000,
+		"width": 1000,
+		"height": 700,
+		"frame": false,
+		"toolbar": false,
+		"transparent": true,
+		"icon": "logo.png"
+	}
+}

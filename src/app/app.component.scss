@@ -91,7 +91,7 @@ md-sidenav-layout.m2app-dark {
 
 //-------------
 md-toolbar {
-    font-family: $md-font-family;
+    font-family: $md-font-family!important;
     md-progress-bar {
         position: absolute!important;
         margin: 0!important;

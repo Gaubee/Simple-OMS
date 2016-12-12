@@ -1,3 +1,9 @@
 @import '~@angular/material/core/theming/all-theme';
-@mixin order-manage-theme($theme) {
+@mixin order-manage-theme($theme) {}
+
+.pages {
+    text-align: center;
+    md-button-toggle-group {
+        margin-top: 32px;
+    }
 }

@@ -1,6 +1,8 @@
 <md-card>
   <md-grid-list md-card-image class="headers" cols="6" rowHeight="48px">
-    <md-grid-tile><md-checkbox>全选</md-checkbox></md-grid-tile>
+    <md-grid-tile>
+      <md-checkbox>全选</md-checkbox>
+    </md-grid-tile>
     <md-grid-tile>顾客</md-grid-tile>
     <md-grid-tile>联系方式</md-grid-tile>
     <md-grid-tile>日期</md-grid-tile>
@@ -8,7 +10,9 @@
     <md-grid-tile>操作</md-grid-tile>
   </md-grid-list>
   <md-grid-list md-card-image class="item" *ngFor="let order of order_list" cols="6" rowHeight="32px">
-    <md-grid-tile><md-checkbox></md-checkbox></md-grid-tile>
+    <md-grid-tile>
+      <md-checkbox></md-checkbox>
+    </md-grid-tile>
     <md-grid-tile>{{order.customer.name}}</md-grid-tile>
     <md-grid-tile>{{order.customer.phone}}</md-grid-tile>
     <md-grid-tile>{{order.create_time|date:"yyyy-MM-dd"}}</md-grid-tile>
@@ -18,6 +22,26 @@
       <button md-icon-button md-tooltip="删除" tooltip-position="after" (click)="deleteOrder(order)"><md-icon>delete</md-icon></button>
     </md-grid-tile>
   </md-grid-list>
+  <md-card-content class="pages">
+    <md-button-toggle-group [(ngModel)]="current_page_index" (ngModelChange)="pageJump(current_page_index)">
+      <!--不能使用ngModelChange来绑定事件，因为前一页和后一页的数据绑定时动态的，一旦使用ngModelChange绑定会造成持续触发-->
+      <md-button-toggle value=0 [disabled]="loaded_page_index == 0">
+        <md-icon>first_page</md-icon>
+      </md-button-toggle>
+      <md-button-toggle (click)="pageJump(loaded_page_index - 1)" [checked]="loaded_page_index&&false" [disabled]="loaded_page_index == 0">
+        <md-icon>chevron_left</md-icon>
+      </md-button-toggle>
+      <md-button-toggle *ngFor="let page_index of pages" [value]="page_index" [disabled]="page_index == loaded_page_index">
+        {{page_index+1}}
+      </md-button-toggle>
+      <md-button-toggle (click)="pageJump(loaded_page_index + 1)" [checked]="loaded_page_index&&false" [disabled]="loaded_page_index == pages.length-1">
+        <md-icon>chevron_right</md-icon>
+      </md-button-toggle>
+      <md-button-toggle [value]="pages.length - 1" [disabled]="loaded_page_index == pages.length-1">
+        <md-icon>last_page</md-icon>
+      </md-button-toggle>
+    </md-button-toggle-group>
+  </md-card-content>
   <md-card-footer>
     <md-progress-bar *ngIf="is_loading_list_data" mode="indeterminate"></md-progress-bar>
   </md-card-footer>

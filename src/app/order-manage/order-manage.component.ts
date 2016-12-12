@@ -33,18 +33,13 @@ export class OrderManageComponent implements OnInit {
   constructor(
     private _app: AppComponent,
     private _router: Router,
+    private route: ActivatedRoute,
     private _order_service: OrderService
   ) { }
 
   is_loading_list_data: boolean
 
   ngOnInit() {
-    // 加载数据
-    this.is_loading_list_data = true;
-    this._order_service.getOrders().then(orders => {
-      this.order_list = orders;
-      this.is_loading_list_data = false;
-    });
 
     const app = this._app;
     app.toolbar_title = "订单管理";
@@ -57,6 +52,13 @@ export class OrderManageComponent implements OnInit {
         this._router.navigate(["./orders/new"]);
       }
     })
+    // 根据分页信息加载数据
+    this.route.params.subscribe((value) => {
+      console.log(value);
+      this.current_page_index = parseInt(value['page']) | 0;
+      this.getPages();
+    });
+
   }
 
   goEditOrder(order) {
@@ -66,6 +68,49 @@ export class OrderManageComponent implements OnInit {
     console.log('delete');
   }
 
+  //分页功能
+  pages: number[] = [0];
+  current_page_index = 0;//当前选中的页号
+  loaded_page_index = 0;
+  show_order_num = 3;
+  private _total_num = -1;
+  async getPages() {
+    // 获取分页参数
+    if (this._total_num == -1) {//分页信息只获取一次
+      await this.getPagesInfo();
+    }
+    this.checkPageInfo();
+    await this.getPageData();
+  }
+  async getPagesInfo() {
+    var total_num = await this._order_service.getOrdersCount();
+    var page_num = this._total_num = Math.ceil(total_num / this.show_order_num) || 1;
+    this.pages = Array.from<number>({ length: page_num }).map((_, i) => i);
+  }
+  checkPageInfo() {
+    var page_num = this.pages.length;
+    if (this.current_page_index >= page_num) {
+      this.current_page_index = page_num - 1;
+    } else if (this.current_page_index < 0) {
+      this.current_page_index = 0;
+    }
+  }
+  async getPageData() {
+    this.is_loading_list_data = true;
+    var loading_page_index = this.current_page_index;
+    const orders = await this._order_service.getOrders(loading_page_index * this.show_order_num, this.show_order_num, {
+      DESC: true
+    });
+
+    this.loaded_page_index = loading_page_index;
+    this.order_list = orders;
+    this.is_loading_list_data = false;
+  }
+  pageJump(to_page_index) {
+    if(to_page_index!==null){
+      this._router.navigate(['./', { page: to_page_index }]);
+    }
+  }
 }
 
 @Pipe({ name: 'fixed' })
@@ -250,7 +295,7 @@ export class OrderAddComponent extends OrderEditBase implements OnInit, AfterVie
 
 
     // 获取要指定的顾客ID
-    this.order.customer_id = this.route.params['value']['customer_id'];
+    this.order.customer_id = this.route.snapshot.params['customer_id'];
     this.getSelectedCustomerData();
   }
   ngAfterViewInit() {
@@ -292,7 +337,7 @@ export class OrderUpdateComponent extends OrderEditBase implements OnInit {
     });
 
     // 获取要修改的数据
-    this.cur_order_id = this.route.params['value']['id'];
+    this.cur_order_id = this.route.snapshot.params['id'];
     this.is_loaded_cur_order_data = false;
     app.mixLoadingBarDefault({ show: true });// 显示加载栏
     this._order_service.getOrderById(this.cur_order_id).then(order => {

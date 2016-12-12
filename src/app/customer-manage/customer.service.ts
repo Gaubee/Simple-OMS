@@ -266,7 +266,7 @@ export interface Customer {
 }
 
 export const CUSTOMER_DEFAULT: Customer = {
-    get avatar() { return `/assets/avatar/${(8 * Math.random()) | 0}.png` },
+    get avatar() { return `./assets/avatar/${(8 * Math.random()) | 0}.png` },
     name: "",
     phone: "",
     address: "",

@@ -6,7 +6,7 @@
         <md-card-title>{{customer_item.name}}</md-card-title>
         <md-card-subtitle>{{customer_item.phone}}</md-card-subtitle>
       </md-card-header>
-      <md-card-title-group>
+      <md-card-title-group [ngClass]="{blur: customer_item.is_to_remove}">
         <md-card-subtitle class="order-title">
           <span class="order-title-text">相关订单</span>
           <button *ngIf="customer_item.has_more" (click)="showMoreCustomerOrders(customer_item)" md-icon-button md-tooltip="显示更多" tooltip-position="after"><md-icon>expand_more</md-icon></button>
