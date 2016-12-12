@@ -22,7 +22,6 @@ import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 // import { XLarge } from './home/x-large';
 import { MyDatePickerModule } from 'MyDatePicker'
-import { SelectModule } from 'angular2-select';
 
 import { NavComponent } from './nav/nav.component';
 import { OrderManageComponent, OrderAddComponent, OrderUpdateComponent, FixedPipe, FocusDirective } from './order-manage/order-manage.component';
@@ -83,7 +82,6 @@ type StoreType = {
     RouterModule.forRoot(ROUTES, { useHash: true, preloadingStrategy: PreloadAllModules }),
     MaterialModule.forRoot(),
     MyDatePickerModule,
-    SelectModule,
     MdSelectModule.forRoot()
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection

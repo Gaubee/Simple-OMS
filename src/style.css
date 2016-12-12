@@ -1,6 +1,12 @@
+@font-face {
+  font-family: InziuSC;
+  src: local("Inziu Iosevka SC"),
+       local("微软雅黑"),
+       url("./assets/font/inziu-SC-regular.ttc");
+}
 /*一些ng2中无法表达的表达式在这里实现*/
 md-tab-group>.md-tab-header>.md-tab-label{
-    font-family: 'Inziu Iosevka SC','Helvetica Neue', sans-serif!important;
+    font-family: InziuSC,'Helvetica Neue', sans-serif!important;
 }
 md-tab-group>.md-tab-header{
     overflow: auto!important;

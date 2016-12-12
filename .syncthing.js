@@ -1,6 +1,6 @@
 const fs = require("fs");
 const child_process = require("child_process");
-var ignore_keys = ["/node_modules",".git"];
+var ignore_keys = ["/node_modules", "/dist", ".git"];
 var watch_deep = 4;
 var watch_dirs = ["./"];
 var ls_exec = "ls -d .";
@@ -30,7 +30,7 @@ if (is_server.toLowerCase()[0] === "s") {
 }
 watch_dirs.forEach(dir => {
 	fs.watch(dir, (event, filename) => {
-		if(filename.startsWith("~")||filename.startsWith(".")){
+		if (filename.startsWith("~") || filename.startsWith(".")) {
 			return
 		}
 		console.log(dir, event, filename);

@@ -17,6 +17,8 @@ md-sidenav-layout.m2app-dark {
 
 .app-content {
     padding: 20px;
+    box-sizing: border-box;
+    height: calc(100vh - 116px);
 }
 
 .app-content md-card {
@@ -89,6 +91,7 @@ md-sidenav-layout.m2app-dark {
 
 //-------------
 md-toolbar {
+    font-family: $md-font-family;
     md-progress-bar {
         position: absolute!important;
         margin: 0!important;

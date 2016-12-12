@@ -51,9 +51,9 @@ const DEFAULT_LOADING_BAR: LoadingBarHandle = {
 export class AppComponent {
     version = "v0.0.1";
     angularclassLogo = 'assets/img/angularclass-avatar.png';
-    name = 'Angular 2 Webpack Starter';
+    name = '订单管理系统 - 游都科技';
     url = '';
-    toolbar_title = "订单管理系统";
+    toolbar_title = "主页";
 
     isDarkTheme: boolean = false;
     lastDialogResult: string;

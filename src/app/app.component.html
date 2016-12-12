@@ -36,18 +36,17 @@
     <router-outlet></router-outlet>
   </div>
 
+  <footer>
+    <p style="text-align:center;">版权所有 &copy; 游都科技 <a [href]="url">@Youdob</a></p>
+    <!--<div>
+    <a [href]="url">
+      <img [src]="angularclassLogo" width="25%">
+    </a>
+  </div>-->
+  </footer>
 </md-sidenav-layout>
 
 <span *ngIf="fab_handle.enabled" (click)="fab_handle.click_event()" class="app-action" md-tooltip={{fab_handle.button_tooltip}}
   tooltip-position="above" [class.m2app-dark]="isDarkTheme">
   <button md-fab [disabled]="fab_handle.disabled"><md-icon>{{fab_handle.button_text}}</md-icon></button>
 </span>
-
-<footer>
-  <p style="text-align:center;">版权所有 &copy; 游都科技 <a [href]="url">@Youdob</a></p>
-  <!--<div>
-    <a [href]="url">
-      <img [src]="angularclassLogo" width="25%">
-    </a>
-  </div>-->
-</footer>
