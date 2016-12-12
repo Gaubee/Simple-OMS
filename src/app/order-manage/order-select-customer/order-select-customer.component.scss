@@ -1,0 +1,34 @@
+@import '~@angular/material/core/theming/all-theme';
+@import '../../var';
+md-card,
+md-input,
+md-textarea,
+[md-raised-button],
+[md-button],
+my-date-picker,
+md-select,
+md-option {
+    font-family: $md-font-family!important;
+}
+.item-warp {
+    display: flex;
+    flex-direction: row;
+    .item-left,
+    .item-right,
+    .item-1-3,
+    .item-2-3 {
+        width: 50%;
+        display: inline-flex;
+        box-sizing: border-box;
+        >md-card {
+            width: 100%;
+            overflow: auto;
+        }
+    }
+    .item-1-3 {
+        width: 33.33%;
+    }
+    .item-2-3 {
+        width: 66.66%;
+    }
+}

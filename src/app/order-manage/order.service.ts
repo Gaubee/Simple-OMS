@@ -127,9 +127,11 @@ export class OrderService {
             }
         });
     }
-    async getOrders(page = 0, num = 10): Promise<Order[]> {
+    async getOrders(start_index = 0, num = 10, dynamic_configuration: {
+        is_stop?: boolean,
+        DESC?: boolean
+    } = {}): Promise<Order[]> {
         var remove_ids = await this._getRemovedIds("list");
-        var start_index = page * num;
         var pre_remove_num = 0;// 在start_index前被移除的对象数量
         remove_ids.some(v => {
             if (v > start_index) {
@@ -143,14 +145,14 @@ export class OrderService {
         var store = t.objectStore("list");
 
         // >= start_index
-        var cursor = store.openCursor(IDBKeyRange.lowerBound(start_index));
+        var cursor = store.openCursor(IDBKeyRange.lowerBound(start_index), dynamic_configuration.DESC ? 'prev' : 'next');
 
         var orders = [];
         cursor.onsuccess = function (e) {
             var res: IDBCursorWithValue = e.target['result'];
             if (res) {
-                console.log("Key", res.key);
-                console.log("Data", res.value);
+                // console.log("Key", res.key);
+                // console.log("Data", res.value);
                 var order: Order = res.value;
                 order.id = String(res.key);
                 orders.push(order);
@@ -161,7 +163,11 @@ export class OrderService {
         }
         return orders;
     }
-    async getOrdersByFilter(filter: (order: Order) => boolean, page = 0, num = 10): Promise<Order[]> {
+    async getOrdersByFilter(filter: (order: Order) => boolean, before_num = 0, num = 10
+        , dynamic_configuration: {
+            is_stop?: boolean,
+            DESC?: boolean
+        } = {}): Promise<Order[]> {
 
 
         const db = await this.db;
@@ -169,9 +175,8 @@ export class OrderService {
         var store = t.objectStore("list");
 
         // >= start_index
-        var cursor = store.openCursor();
+        var cursor = store.openCursor(null, dynamic_configuration.DESC ? 'prev' : 'next');
 
-        var before_num = page * num;
         var before_orders = [];
         return new Promise<Order[]>((resolve, reject) => {
 
@@ -179,8 +184,8 @@ export class OrderService {
             cursor.onsuccess = function (e) {
                 var res: IDBCursorWithValue = e.target['result'];
                 if (res) {
-                    console.log("Key", res.key);
-                    console.log("Data", res.value);
+                    // console.log("Key", res.key);
+                    // console.log("Data", res.value);
                     var order: Order = res.value;
                     order.id = String(res.key);
                     if (!filter(order)) {

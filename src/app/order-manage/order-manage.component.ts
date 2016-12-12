@@ -18,6 +18,7 @@ import { OrderItemComponent } from './order-item/order-item.component';
 import { MdDialog, MdDialogRef, MdSnackBar, MdSnackBarConfig } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OrderService, Order, ORDER_DEFAULT } from './order.service';
+import { CustomerService } from '../customer-manage/customer.service';
 import { copy } from '../common';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderSelectCustomerComponent } from './order-select-customer/order-select-customer.component'
@@ -176,14 +177,37 @@ class OrderEditBase {
   customer_select_dialog: MdDialogRef<OrderSelectCustomerComponent>
   openCustomerSelectDialog() {
     console.log("OPEN!!")
-    this.customer_select_dialog = this.dialog.open(OrderSelectCustomerComponent, {
-      disableClose: true
-    });
+    var dialog_config = {
+      disableClose: true,
+      position: {
+        top: '0'
+      }
+    };
+    this.customer_select_dialog = this.dialog.open(OrderSelectCustomerComponent, dialog_config);
 
     this.customer_select_dialog.afterClosed().subscribe(result => {
       console.log('result: ' + result);
-      this.customer_select_dialog = null;
+      this.customer_select_dialog = null;//释放窗口资源
+      if (result) {
+        this.order.customer_id = result;
+        this.getSelectedCustomerData();
+      }
     });
+    const dialog_component = this.customer_select_dialog.componentInstance;
+    dialog_component.selected_customer_id = this.order.customer_id;
+    dialog_component.selecteCustomer();
+  }
+  // 是否在加载顾客数据
+  public _customer_service: CustomerService
+  public is_loaded_selected_customer_data: boolean
+  getSelectedCustomerData() {
+    if (this.order.customer_id) {
+      this.is_loaded_selected_customer_data = false;
+      this._customer_service.getCustomerById(this.order.customer_id).then(customer => {
+        this.order.customer = customer;
+        this.is_loaded_selected_customer_data = true;
+      });
+    }
   }
 }
 
@@ -197,7 +221,9 @@ export class OrderAddComponent extends OrderEditBase implements OnInit, AfterVie
 
   constructor(
     public _app: AppComponent,
+    private route: ActivatedRoute,
     private _order_service: OrderService,
+    public _customer_service: CustomerService,
     private _snackbar: MdSnackBar,
     public ref: ElementRef,
     public dialog: MdDialog
@@ -221,6 +247,11 @@ export class OrderAddComponent extends OrderEditBase implements OnInit, AfterVie
         this.activeTabIndex = 0;
       }
     });
+
+
+    // 获取要指定的顾客ID
+    this.order.customer_id = this.route.params['value']['customer_id'];
+    this.getSelectedCustomerData();
   }
   ngAfterViewInit() {
   }
@@ -235,6 +266,7 @@ export class OrderUpdateComponent extends OrderEditBase implements OnInit {
   constructor(
     public _app: AppComponent,
     private route: ActivatedRoute,
+    public _customer_service: CustomerService,
     private _snackbar: MdSnackBar,
     private _order_service: OrderService,
     public dialog: MdDialog

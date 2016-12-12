@@ -6,31 +6,41 @@
         <md-card-title>{{customer_item.name}}</md-card-title>
         <md-card-subtitle>{{customer_item.phone}}</md-card-subtitle>
       </md-card-header>
+      <md-card-title-group>
+        <md-card-subtitle class="order-title">
+          <span class="order-title-text">相关订单</span>
+          <button *ngIf="customer_item.has_more" (click)="showMoreCustomerOrders(customer_item)" md-icon-button md-tooltip="显示更多" tooltip-position="after"><md-icon>expand_more</md-icon></button>
+        </md-card-subtitle>
+      </md-card-title-group>
       <div *ngIf="customer_item.is_to_remove" class="remove-customer-confirm-dialog" style="display:flex;align-items: center;">
         <div style="flex:auto">
           <md-card-title style="text-align:center;">确定删除顾客：{{customer_item.name}}？</md-card-title>
-          <button md-icon-button (click)="removeCustomer(customer_item.id,i,customer_item)" md-tooltip="确定删除" tooltip-position="before"><md-icon>check</md-icon></button>
-          <button md-icon-button (click)="customer_item.is_to_remove = false" md-tooltip="不删除" tooltip-position="after"><md-icon>clear</md-icon></button>
+          <button md-icon-button (click)="customer_item.is_to_remove = false" md-tooltip="不删除" tooltip-position="before"><md-icon>clear</md-icon></button>
+          <button md-icon-button (click)="removeCustomer(customer_item.id,i,customer_item)" md-tooltip="确定删除" tooltip-position="after"><md-icon>check</md-icon></button>
         </div>
       </div>
-      <md-card-content [ngClass]="{blur: customer_item.is_to_remove}">
-        <md-list>
-          <h3 md-subheader>相关订单</h3>
-          <md-list-item *ngFor="let order_item of customer_item.order_list">
+      <md-card-content class="order-list" [ngClass]="{blur: customer_item.is_to_remove}">
+        <md-nav-list>
+          <md-list-item [routerLink]="['/orders',order_item.id]" *ngFor="let order_item of customer_item.order_list;let i = index">
             <h3 md-line>金额： {{order_item.order_price|fixed}} 元</h3>
             <p md-line>日期： {{order_item.create_time|date:"yyyy / MM / dd"}} </p>
-            <button [routerLink]="['/orders',order_item.id]" md-icon-button md-list-avatar md-tooltip="编辑" tooltip-position="before"><md-icon>edit</md-icon></button>
+            <p md-line class="secondary-text">{{order_item.remark}}</p>
+            <!--<button md-icon-button md-tooltip="编辑" tooltip-position="before"><md-icon>edit</md-icon></button>-->
+            <span md-list-avatar>{{_indexLeftPad(i)}}</span>
           </md-list-item>
-        </md-list>
+          <md-list-item *ngIf="(!customer_item.is_loading_order_list)&&customer_item.order_list.length==0">
+            <i>暂无订单</i>
+          </md-list-item>
+        </md-nav-list>
       </md-card-content>
+      <md-card-footer *ngIf="customer_item.is_loading_order_list">
+        <md-progress-bar mode="indeterminate"></md-progress-bar>
+      </md-card-footer>
       <md-card-actions [ngClass]="{blur: customer_item.is_to_remove}" align="end" *ngIf="!customer_item.is_loading_order_list">
         <button md-button (click)="customer_item.is_to_remove = true"><md-icon>delete</md-icon><span class="md-button-text">删除顾客</span></button>
         <button md-button (click)="customer_item.is_editing = true"><md-icon>mode_edit</md-icon><span class="md-button-text">修改顾客</span></button>
         <button md-button [routerLink]="['/orders/new',customer_item.id]"><md-icon>add</md-icon><span class="md-button-text">新建订单</span></button>
       </md-card-actions>
-      <md-card-footer *ngIf="customer_item.is_loading_order_list">
-        <md-progress-bar mode="indeterminate"></md-progress-bar>
-      </md-card-footer>
     </md-card>
   </div>
   <app-customer-edit class="customer-card" *ngIf="customer_item.is_editing" [customer]="customer_item" (on-submit)="onSubmitCustomer($event,i,customer_item)"></app-customer-edit>

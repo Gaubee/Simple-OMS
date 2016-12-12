@@ -10,6 +10,8 @@ md-select,
 md-option,
 h3,
 p,
+i,
+span
 {
     font-family: $md-font-family!important;
 }
@@ -45,7 +47,28 @@ md-button {
     text-align: center;
 }
 
+.order-title{
+    > .order-title-text{
+        display: inline-block;
+        line-height: 40px;
+    }
+    > button{
+        vertical-align: top!important;
+    }
+}
+.order-list {
+    height: 272px;
+    overflow: auto;
+    overflow-x: hidden;
+}
 .blur {
     filter: blur(10px);
     pointer-events: none;
+}
+.secondary-text {
+  color: rgba(0, 0, 0, 0.54);
+}
+span[md-list-avatar]{
+    line-height: 40px;
+    text-align: center;
 }

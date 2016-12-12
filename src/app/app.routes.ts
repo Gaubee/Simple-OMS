@@ -24,6 +24,7 @@ export const ROUTES: Routes = [
   },
   { path: 'orders', component: OrderManageComponent },
   { path: 'orders/new', component: OrderAddComponent },
+  { path: 'orders/new/:customer_id', component: OrderAddComponent },
   { path: 'orders/:id', component: OrderUpdateComponent },
   { path: 'materials', component: MaterialManageComponent },
   { path: 'materials/new', component: MaterialAddComponent },

@@ -20,7 +20,7 @@ import { AppState, InternalStateType } from './app.service';
 import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
-import { XLarge } from './home/x-large';
+// import { XLarge } from './home/x-large';
 import { MyDatePickerModule } from 'MyDatePicker'
 import { SelectModule } from 'angular2-select';
 
@@ -65,7 +65,7 @@ type StoreType = {
     , AboutComponent
     , HomeComponent
     , NoContentComponent
-    , XLarge
+    // , XLarge
 
     , NavComponent
     , OrderManageComponent, OrderAddComponent, OrderUpdateComponent, OrderSelectCustomerComponent

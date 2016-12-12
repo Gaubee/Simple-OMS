@@ -1,7 +1,41 @@
-<md-card>
-  <p>
-    order-select-customer works!
-  </p>
-  <button type="button" (click)="dialogRef.close('yes')">Yes</button>
-  <button type="button" (click)="dialogRef.close('no')">No</button>
-</md-card>
+<div class="item-warp" style="min-width: 60vw;max-width: 90vw;width: 900px;">
+  <div class="item-left">
+    <md-card>
+      <md-card-title>快速搜索指定顾客</md-card-title>
+      <md-input style="width:100%;" placeholder="顾客名字/电话号码" [(ngModel)]="search_text" (ngModelChange)="searchCustomer()">
+        <button md-icon-button md-suffix><md-icon>search</md-icon></button>
+      </md-input>
+      <md-card-content style="height: 120px;">
+        <md-grid-list *ngFor="let customer of search_list" cols="5" rowHeight="32px">
+          <md-grid-tile>
+            <md-radio-group [(ngModel)]="selected_customer_id" (ngModelChange)="selecteCustomer()">
+              <md-radio-button [value]="customer.id" [checked]="selected_customer_id==customer.id"></md-radio-button>
+            </md-radio-group>
+          </md-grid-tile>
+          <md-grid-tile colspan=2>{{customer.name}}</md-grid-tile>
+          <md-grid-tile colspan=2>{{customer.phone}}</md-grid-tile>
+        </md-grid-list>
+        <md-grid-list *ngIf="(!is_search_able) && selected_customer_id" cols="5" rowHeight="32px">
+          <md-grid-tile>
+            <md-radio-group [(ngModel)]="selected_customer_id" (ngModelChange)="selecteCustomer()">
+              <md-radio-button [value]="cur_customer.id" [checked]="selected_customer_id==cur_customer.id"></md-radio-button>
+            </md-radio-group>
+          </md-grid-tile>
+          <md-grid-tile colspan=2>{{cur_customer.name}}</md-grid-tile>
+          <md-grid-tile colspan=2>{{cur_customer.phone}}</md-grid-tile>
+        </md-grid-list>
+      </md-card-content>
+      <md-card-footer *ngIf="is_searching">
+        <md-progress-bar mode="determinate" [value]="search_progress"></md-progress-bar>
+      </md-card-footer>
+      <md-card-actions align="end">
+        <button *ngIf="selected_customer_id" md-button type="button" color="primary" (click)="toNewCustomer()">新增顾客</button>
+        <button md-button type="button" color="primary" (click)="dialogRef.close()">取消</button>
+        <button md-raised-button type="button" color="primary" (click)="dialogRef.close(selected_customer_id)">确定</button>
+      </md-card-actions>
+    </md-card>
+  </div>
+  <div class="item-left">
+    <app-customer-edit style="width: 100%;" [customer]="cur_customer" (on-submit)="onNewCustomer($event)" [title]="selected_customer_id?'修改顾客信息':'新增顾客'"></app-customer-edit>
+  </div>
+</div>

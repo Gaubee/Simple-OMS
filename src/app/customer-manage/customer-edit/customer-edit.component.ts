@@ -9,6 +9,7 @@ import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
   styleUrls: ['./customer-edit.component.scss', '../customer-manage.component.scss']
 })
 export class CustomerEditComponent implements OnInit {
+  @Input() title = "";
   @Input() customer: Customer = copy(CUSTOMER_DEFAULT);
   @Output('on-submit') onSubmit = new EventEmitter<Customer>();
   sex_enum = HUMAN_SEX
@@ -20,7 +21,7 @@ export class CustomerEditComponent implements OnInit {
 
   ngOnInit() {
   }
-  is_uploading:boolean
+  is_uploading: boolean
   async submitCustomer() {
     const customer = this.customer;
     this.is_uploading = true;

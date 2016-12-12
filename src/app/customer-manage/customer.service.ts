@@ -45,7 +45,23 @@ export class CustomerService {
             }
         });
     }
-    async getCustomers(page = 0, num = 10): Promise<Customer[]> {
+    async getCustomersCount() {
+        const db = await this.db;
+
+        var t = db.transaction(["list"], "readonly");
+        var store = t.objectStore("list");
+        var cursor = store.count();
+        return new Promise<number>((resolve, reject) => {
+            cursor.onsuccess = function (e) {
+                resolve(cursor.result)
+            }
+            cursor.onerror = reject;
+        });
+    }
+    async getCustomers(page = 0, num = 10, dynamic_configuration: {
+        is_stop?: boolean,
+        DESC?: boolean
+    } = {}): Promise<Customer[]> {
         var remove_ids = await this._getRemovedIds("list");
         var start_index = page * num;
         var pre_remove_num = 0;// 在start_index前被移除的对象数量
@@ -61,15 +77,15 @@ export class CustomerService {
         var store = t.objectStore("list");
 
         // >= start_index
-        var cursor = store.openCursor(IDBKeyRange.lowerBound(start_index));
+        var cursor = store.openCursor(IDBKeyRange.lowerBound(start_index), dynamic_configuration.DESC ? 'prev' : 'next');
         return new Promise<Customer[]>((resolve, reject) => {
 
             var customers = [];
             cursor.onsuccess = function (e) {
                 var res: IDBCursorWithValue = e.target['result'];
                 if (res) {
-                    console.log("Key", res.key);
-                    console.log("Data", res.value);
+                    // console.log("Key", res.key);
+                    // console.log("Data", res.value);
                     var customer: Customer = res.value;
                     customer.id = String(res.key);
                     customers.push(customer);
@@ -86,6 +102,59 @@ export class CustomerService {
             // return customers;
         });
     }
+
+    async getCustomersByFilter(filter: (customer: Customer) => boolean, page = 0, num = 10
+        , dynamic_configuration: {
+            is_stop?: boolean
+        } = {}): Promise<Customer[]> {
+
+
+        const db = await this.db;
+        var t = db.transaction(["list"], "readonly");
+        var store = t.objectStore("list");
+
+        // >= start_index
+        var cursor = store.openCursor();
+
+        var before_num = page * num;
+        var before_customers = [];
+        return new Promise<Customer[]>((resolve, reject) => {
+
+            var customers = [];
+            cursor.onsuccess = function (e) {
+                var res: IDBCursorWithValue = e.target['result'];
+                if (dynamic_configuration.is_stop) {// 中断搜索
+                    resolve(customers)
+                }
+                if (res) {
+                    // console.log("Key", res.key);
+                    // console.log("Data", res.value);
+                    var customer: Customer = res.value;
+                    customer.id = String(res.key);
+                    if (!filter(customer)) {
+                        return res.continue();
+                    }
+
+                    if (before_customers.length < before_num) {
+                        before_customers.push(customer)
+                    } else {
+                        customers.push(customer);
+                    }
+                    if (customers.length < num) {
+                        res.continue();// 只要不是在Onsuccess里头立刻运行continue，光标会马上被释放
+                    } else {
+                        resolve(customers)
+                    }
+                } else {
+                    resolve(customers)
+                }
+            }
+            cursor.onerror = reject;
+            return customers;
+        });
+
+    }
+
     async getCustomerById(id) {
         const db = await this.db;
         var t = db.transaction(["list"], "readonly");

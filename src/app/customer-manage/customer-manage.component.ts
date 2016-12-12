@@ -5,7 +5,8 @@ import { AppComponent } from '../app.component';
 import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
 
 interface CustomerCard extends Customer {
-  is_to_remove?:boolean,
+  has_more?: boolean,
+  is_to_remove?: boolean,
   is_editing?: boolean,
   is_loading_order_list?: boolean,
   order_list?: Order[],
@@ -28,23 +29,18 @@ export class CustomerManageComponent implements OnInit {
 
   }
 
+  show_order_list_number = 3;// 要显示的订单数
   async ngOnInit() {
-
     // 加载数据
-    var customer_list = await this._customer_service.getCustomers();
+    var customer_list = await this._customer_service.getCustomers(0, 6, { DESC: true });
     this.customer_list = customer_list.map((customer) => {
-      var customer_card = Object.assign({
+      var customer_card: CustomerCard = Object.assign({
+        has_more: false,
         is_editing: false,
         is_loading_order_list: true,
         order_list: []
       }, customer);
-      this._order_service.getOrdersByFilter((order) => order.customer_id == customer_card.id, 0, 3)
-        .then(orders => {
-          console.log("orders", orders)
-          customer_card.is_loading_order_list = false;
-          customer_card.order_list = orders;
-          // this._change_detector_ref.markForCheck();
-        });
+      this.showMoreCustomerOrders(customer_card);
       return customer_card;
     });
 
@@ -68,7 +64,7 @@ export class CustomerManageComponent implements OnInit {
   }
 
   onSubmitCustomer(res_id, list_index, customer: CustomerCard) {
-    console.log(arguments)
+    customer.id = res_id;
     customer.is_editing = false;
   }
   is_to_remove: boolean
@@ -81,4 +77,34 @@ export class CustomerManageComponent implements OnInit {
     setTimeout(() => snackbarref.dismiss(), 2000);// 定时关闭
   }
 
+  showMoreCustomerOrders(customer_card: CustomerCard) {
+    this._order_service.getOrdersByFilter((order) => order.customer_id == customer_card.id
+      , customer_card.order_list.length
+      , this.show_order_list_number + 1
+      , {
+        DESC: true
+      })
+      .then(orders => {
+        console.log("orders", orders)
+        if (orders.length > this.show_order_list_number) {//有更多的订单可以显示
+          customer_card.has_more = true;
+          orders = orders.slice(0, 3);
+        } else {
+          customer_card.has_more = false;
+        }
+        customer_card.is_loading_order_list = false;
+        customer_card.order_list = customer_card.order_list.concat(orders);
+        // this._change_detector_ref.markForCheck();
+      });
+  }
+
+  _indexLeftPad(i) {
+    var res = String(i);
+    if (res.length >= 2) {
+      return res;
+    } else {
+      res = '00' + res;
+      return res.substr(-2);
+    }
+  }
 }
