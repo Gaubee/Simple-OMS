@@ -52,8 +52,8 @@ export class AppComponent {
     version = "v0.0.1";
     angularclassLogo = 'assets/img/angularclass-avatar.png';
     name = 'Angular 2 Webpack Starter';
-    url = 'https://twitter.com/AngularClass';
-    toolbar_title = "Angular Material2 Example App";
+    url = '';
+    toolbar_title = "订单管理系统";
 
     isDarkTheme: boolean = false;
     lastDialogResult: string;
