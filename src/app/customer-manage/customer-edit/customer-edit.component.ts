@@ -11,7 +11,7 @@ import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
 export class CustomerEditComponent implements OnInit {
   @Input() title = "";
   @Input() customer: Customer = copy(CUSTOMER_DEFAULT);
-  @Output('on-submit') onSubmit = new EventEmitter<Customer>();
+  @Output('on-submit') onSubmit = new EventEmitter();
   sex_enum = HUMAN_SEX
   constructor(
     public _customer_service: CustomerService,
@@ -26,16 +26,22 @@ export class CustomerEditComponent implements OnInit {
     const customer = this.customer;
     this.is_uploading = true;
     if (customer.id) {
+      var is_new = false;
       var res_id = await this._customer_service.updateCustomer(customer.id, customer)
       var snackbar_msg = "修改完成"
     } else {
+      var is_new = true;
       var res_id = await this._customer_service.addCustomer(customer)
       var snackbar_msg = "添加成功"
     }
     this.is_uploading = false;
     var snackbarref = this._snackbar.open(snackbar_msg);
     setTimeout(() => snackbarref.dismiss(), 2000);// 定时关闭
-    this.onSubmit.emit(res_id);
+    this.onSubmit.emit({
+      customer_id: res_id,
+      customer: customer,
+      is_new: is_new
+    });
   }
 
 }

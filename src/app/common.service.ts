@@ -200,7 +200,7 @@ export class IndexedDBService {
         });
 
     }
-     async update<T>(id, customer: T): Promise<number> {
+    async update<T>(id, customer: T): Promise<number> {
         const db = await this.db;
         var t = db.transaction(["list"], "readwrite");
         var store = t.objectStore("list");
@@ -232,7 +232,7 @@ export class IndexedDBService {
                 // 把删除的ID添加到“移除记录表”中
                 var remove_ids = await this._getRemovedIds("list");
                 remove_ids.push(id);
-                remove_ids.sort();
+                remove_ids.sort((a, b) => a - b);
 
                 const db = await this.db;
                 var t = db.transaction(["deleted_ids"], "readwrite");

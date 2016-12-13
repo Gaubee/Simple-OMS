@@ -28,7 +28,7 @@ import { OrderManageComponent, OrderAddComponent, OrderUpdateComponent, FixedPip
 import { OrderItemComponent, OrderItemListComponent } from './order-manage/order-item/order-item.component';
 import { OrderSelectCustomerComponent } from './order-manage/order-select-customer/order-select-customer.component';
 import { MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent } from './material-manage/material-manage.component';
-import { CustomerManageComponent } from './customer-manage/customer-manage.component';
+import { CustomerManageComponent, CustomerCardComponent } from './customer-manage/customer-manage.component';
 import { CustomerEditComponent } from './customer-manage/customer-edit/customer-edit.component';
 import { SettingsComponent } from './settings/settings.component';
 
@@ -69,7 +69,7 @@ type StoreType = {
     , NavComponent
     , OrderManageComponent, OrderAddComponent, OrderUpdateComponent, OrderSelectCustomerComponent
     , MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent
-    , CustomerEditComponent, CustomerManageComponent
+    , CustomerEditComponent, CustomerManageComponent, CustomerCardComponent
     , SettingsComponent
 
     , FixedPipe, FocusDirective

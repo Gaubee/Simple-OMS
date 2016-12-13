@@ -14,12 +14,6 @@ interface FabButtonHandle {
     enabled?: boolean,
     disabled?: boolean,
 };
-interface LoadingBarHandle {
-    show?: boolean;
-    mode?: string;
-    value?: number;
-    bufferValue?: number;
-}
 const DEFAULT_FAB_HANDLE: FabButtonHandle = {
     button_text: "",
     button_tooltip: "",
@@ -29,11 +23,31 @@ const DEFAULT_FAB_HANDLE: FabButtonHandle = {
     enabled: false,//show
     disabled: false
 };
+interface LoadingBarHandle {
+    show?: boolean;
+    mode?: string;
+    value?: number;
+    bufferValue?: number;
+}
 const DEFAULT_LOADING_BAR: LoadingBarHandle = {
     show: false,
     mode: "indeterminate",
     value: 0,
     bufferValue: 0,
+};
+interface IconButtonHandle {
+    button_text?: string;
+    button_tooltip?: string;
+    click_event?(): void;
+    disabled?: boolean,
+};
+const DEFAULT_ICON_HANDLE: IconButtonHandle = {
+    button_text: "",
+    button_tooltip: "",
+    click_event: () => {
+        console.log("nothing but icon button clicked.");
+    },
+    disabled: false
 };
 /*
  * App Component
@@ -73,6 +87,11 @@ export class AppComponent {
     loading_bar = copy(DEFAULT_LOADING_BAR);
     mixLoadingBarDefault(options: LoadingBarHandle) {
         this.loading_bar = mix_options(copy(DEFAULT_LOADING_BAR), options);
+    }
+
+    toolbar_buttons: IconButtonHandle[] = []
+    mixIconButtons(options_list: IconButtonHandle[]) {
+        this.toolbar_buttons = options_list.map(options => mix_options(copy(DEFAULT_ICON_HANDLE), options))
     }
 
     constructor(

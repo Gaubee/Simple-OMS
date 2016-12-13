@@ -28,6 +28,14 @@
 
     <!--<span class="app-toolbar-filler"></span>-->
     <!--<button md-button (click)="isDarkTheme = !isDarkTheme">TOGGLE DARK THEME</button>-->
+    <span style="flex: 1 1 auto;"></span>
+
+    <button *ngFor="let icon_button of toolbar_buttons" md-icon-button 
+      (click)="icon_button.click_event()"
+      md-tooltip={{icon_button.button_tooltip}}
+      tooltip-position="below"
+      [disabled]="icon_button.disabled"
+    ><md-icon >{{icon_button.button_text}}</md-icon></button>
 
     <md-progress-bar *ngIf="loading_bar.show" class="app-progress" [mode]="loading_bar.mode" [value]="loading_bar.value" [bufferValue]="loading_bar.bufferValue"></md-progress-bar>
   </md-toolbar>
