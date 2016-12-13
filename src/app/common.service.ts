@@ -62,14 +62,12 @@ export class IndexedDBService {
             var max_id = Math.max(total_num - start_index, 0);
 
             var remove_ids = await this._getRemovedIds("list");
-            var max_id_add = 0;//max_id要增加的值
             remove_ids.some(v => {
                 if (v > max_id) {
                     return true
                 }
-                max_id_add += 1;
+                max_id += 1;
             });
-            max_id += max_id_add;
 
             var range = IDBKeyRange.upperBound(max_id);
             var direction = 'prev'
