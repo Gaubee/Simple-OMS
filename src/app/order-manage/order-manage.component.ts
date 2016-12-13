@@ -54,7 +54,6 @@ export class OrderManageComponent implements OnInit {
     })
     // 根据分页信息加载数据
     this.route.params.subscribe((value) => {
-      console.log(value);
       this.current_page_index = parseInt(value['page']) | 0;
       this.getPages();
     });
@@ -72,7 +71,7 @@ export class OrderManageComponent implements OnInit {
   pages: number[] = [0];
   current_page_index = 0;//当前选中的页号
   loaded_page_index = 0;
-  show_order_num = 3;
+  show_order_num = 10;
   private _total_num = -1;
   async getPages() {
     // 获取分页参数

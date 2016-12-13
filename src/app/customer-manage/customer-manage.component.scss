@@ -11,8 +11,7 @@ md-option,
 h3,
 p,
 i,
-span
-{
+span {
     font-family: $md-font-family!important;
 }
 
@@ -26,12 +25,19 @@ md-button {
     }
 }
 
-.customer-card {
-    display: inline-block;
-    vertical-align: top;
-    width: 32%;
-    min-width: 345px;
-    box-sizing: border-box;
+.customer-card-list {
+    display: flex;
+    .customer-card {
+        flex: 1;
+        // display: inline-block;
+        vertical-align: top;
+        // width: 32%;
+        // min-width: 345px;
+        box-sizing: border-box;
+        >md-card{
+            margin: 5px!important;
+        }
+    }
 }
 
 .remove-customer-confirm-dialog {
@@ -47,28 +53,39 @@ md-button {
     text-align: center;
 }
 
-.order-title{
-    > .order-title-text{
+.order-title {
+    >.order-title-text {
         display: inline-block;
         line-height: 40px;
     }
-    > button{
+    >button {
         vertical-align: top!important;
     }
 }
+
 .order-list {
     height: 272px;
     overflow: auto;
     overflow-x: hidden;
 }
+
 .blur {
     filter: blur(10px);
     pointer-events: none;
 }
+
 .secondary-text {
-  color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, 0.54);
 }
-span[md-list-avatar]{
+
+span[md-list-avatar] {
     line-height: 40px;
     text-align: center;
+}
+
+.pages {
+    text-align: center;
+    md-button-toggle-group {
+        margin-top: 32px;
+    }
 }

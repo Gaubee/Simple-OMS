@@ -11,7 +11,7 @@
   </md-grid-list>
   <md-grid-list md-card-image class="item" *ngFor="let order of order_list" cols="6" rowHeight="32px">
     <md-grid-tile>
-      <md-checkbox></md-checkbox>
+      <md-checkbox>{{order.id}}</md-checkbox>
     </md-grid-tile>
     <md-grid-tile>{{order.customer.name}}</md-grid-tile>
     <md-grid-tile>{{order.customer.phone}}</md-grid-tile>

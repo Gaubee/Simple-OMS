@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Customer, CustomerService } from '../customer-manage/customer.service';
 import { Material, MaterialService } from '../material-manage/material.service';
 import { copy } from '../common';
+import { IndexedDBService, DynamicConfiguration } from '../common.service';
 
 export interface Order {
     id?: string,
@@ -86,161 +87,24 @@ const TYPES: Type[] = [{
 },];
 
 @Injectable()
-export class OrderService {
+export class OrderService extends IndexedDBService {
     constructor(
         private _material_service: MaterialService,
         private _customer_service: CustomerService
     ) {
-        var openRequest = indexedDB.open("order", 1);
-        this.db = new Promise((resolve, reject) => {
-            openRequest.onupgradeneeded = (e) => {
-                console.log("Upgrading...");
-                var db = e.target['result'];
-                db.objectStoreNames.contains("list") || db.createObjectStore("list", {
-                    autoIncrement: true
-                });
-                db.objectStoreNames.contains("deleted_ids") || db.createObjectStore("deleted_ids");
-            }
-            openRequest.onsuccess = (e) => {
-                console.log("Success!");
-                resolve(e.target['result']);
-            }
-            openRequest.onerror = (e) => {
-                console.log("Error");
-                reject(e);
-            }
-        });
+        super('order');
     }
-    db: Promise<IDBDatabase>;
-    private async _getRemovedIds(db_name: string): Promise<Array<number>> {
-        const db = await this.db;
-        var t = db.transaction(["deleted_ids"], "readonly");
-        var store = t.objectStore("deleted_ids");
-        var ob = store.get(db_name);
-
-        return new Promise<Array<any>>((resolve, reject) => {
-            ob.onsuccess = function (e) {
-                resolve(ob.result || []);
-            }
-            ob.onerror = function (e) {
-                reject(e);
-            }
-        });
+    getOrdersCount = this.getCount
+    getOrders(start_index = 0, num = 10
+        , dynamic_configuration?: DynamicConfiguration): Promise<Order[]> {
+        return this.getList<Order>(start_index, num, dynamic_configuration);
     }
-    async getOrdersCount() {
-        const db = await this.db;
-
-        var t = db.transaction(["list"], "readonly");
-        var store = t.objectStore("list");
-        var cursor = store.count();
-        return new Promise<number>((resolve, reject) => {
-            cursor.onsuccess = function (e) {
-                resolve(cursor.result)
-            }
-            cursor.onerror = reject;
-        });
+    getOrdersByFilter(filter: (order: Order) => boolean, before_num = 0, num = 10
+        , dynamic_configuration: DynamicConfiguration): Promise<Order[]> {
+        return this.getListByFilter<Order>(filter, before_num, num, dynamic_configuration);
     }
-    async getOrders(start_index = 0, num = 10, dynamic_configuration: {
-        is_stop?: boolean,
-        DESC?: boolean
-    } = {}): Promise<Order[]> {
-        var remove_ids = await this._getRemovedIds("list");
-        var pre_remove_num = 0;// 在start_index前被移除的对象数量
-        remove_ids.some(v => {
-            if (v > start_index) {
-                return true
-            }
-            start_index += 1;
-        });
-
-        const db = await this.db;
-        var t = db.transaction(["list"], "readonly");
-        var store = t.objectStore("list");
-
-        // >= start_index
-        var cursor = store.openCursor(IDBKeyRange.lowerBound(start_index), dynamic_configuration.DESC ? 'prev' : 'next');
-
-        var orders = [];
-        cursor.onsuccess = function (e) {
-            var res: IDBCursorWithValue = e.target['result'];
-            if (res) {
-                // console.log("Key", res.key);
-                // console.log("Data", res.value);
-                var order: Order = res.value;
-                order.id = String(res.key);
-                orders.push(order);
-                if (orders.length < num) {
-                    res.continue();// 只要不是在Onsuccess里头立刻运行continue，光标会马上被释放
-                }
-            }
-        }
-        return orders;
-    }
-    async getOrdersByFilter(filter: (order: Order) => boolean, before_num = 0, num = 10
-        , dynamic_configuration: {
-            is_stop?: boolean,
-            DESC?: boolean
-        } = {}): Promise<Order[]> {
-
-
-        const db = await this.db;
-        var t = db.transaction(["list"], "readonly");
-        var store = t.objectStore("list");
-
-        // >= start_index
-        var cursor = store.openCursor(null, dynamic_configuration.DESC ? 'prev' : 'next');
-
-        var before_orders = [];
-        return new Promise<Order[]>((resolve, reject) => {
-
-            var orders = [];
-            cursor.onsuccess = function (e) {
-                var res: IDBCursorWithValue = e.target['result'];
-                if (res) {
-                    // console.log("Key", res.key);
-                    // console.log("Data", res.value);
-                    var order: Order = res.value;
-                    order.id = String(res.key);
-                    if (!filter(order)) {
-                        return res.continue();
-                    }
-
-                    if (before_orders.length < before_num) {
-                        before_orders.push(order)
-                    } else {
-                        orders.push(order);
-                    }
-                    if (orders.length < num) {
-                        res.continue();// 只要不是在Onsuccess里头立刻运行continue，光标会马上被释放
-                    } else {
-                        resolve(orders)
-                    }
-                } else {
-                    resolve(orders)
-                }
-            }
-            cursor.onerror = reject;
-            return orders;
-        });
-
-    }
-    async getOrderById(id): Promise<Order> {
-        const db = await this.db;
-        var t = db.transaction(["list"], "readonly");
-        var store = t.objectStore("list");
-
-        var ob = store.get(parseInt(id));
-        return new Promise<Order>((resolve, reject) => {
-            ob.onsuccess = function (e) {
-                var order: Order = ob.result;
-                order.id = String(id);
-                resolve(order);
-            }
-            ob.onerror = function (e) {
-                reject(e);
-            }
-        });
-
+    getOrderById(id): Promise<Order> {
+        return this.getById<Order>(id)
     }
     async wrapFullOrder(order: Order): Promise<Order> {
 
@@ -255,82 +119,15 @@ export class OrderService {
         return order;
     }
     async addOrder(new_order: Order): Promise<number> {
-        if (!new_order.customer_id) {// 如果没有用户ID，进行创建
+        if (!new_order.customer_id) {// 如果没有用户ID，进行创建,TODO:弃用这个多余的保护
             new_order.customer_id = String(await this._customer_service.addCustomer(new_order.customer));
         }
-        const db = await this.db;
-        var t = db.transaction(["list"], "readwrite");
-        var store = t.objectStore("list");
-
-        delete new_order.id
-        new_order.create_time = new Date;
-        var request = store.add(new_order);
-        return new Promise<number>((resolve, reject) => {
-            request.onerror = function (e) {
-                reject(e);
-            }
-
-            request.onsuccess = function (e) {
-                resolve(request.result);
-            }
-        });
-
+        return this.add(new_order);
     }
-    async updateOrder(id, order: Order): Promise<number> {
-        const db = await this.db;
-        var t = db.transaction(["list"], "readwrite");
-        var store = t.objectStore("list");
-
-        var request = store.put(order, parseInt(id));// 如果ID不存在，会被创建
-        return new Promise<number>((resolve, reject) => {
-            request.onerror = function (e) {
-                reject(e);
-            }
-
-            request.onsuccess = function (e) {
-                resolve(request.result);
-            }
-        });
-
+    updateOrder(id, order: Order): Promise<number> {
+        return this.update(id, order)
     }
-    async deleteOrder(id) {
-        const db = await this.db;
-
-        id = parseInt(id);
-
-        var t = db.transaction(["list"], "readwrite");
-        var store = t.objectStore("list");
-        var request = store.delete(id);
-        return new Promise<number>((resolve, reject) => {
-
-            request.onsuccess = async () => {
-                console.log('delete success')
-                // 把删除的ID添加到“移除记录表”中
-                var remove_ids = await this._getRemovedIds("list");
-                remove_ids.push(id);
-                remove_ids.sort();
-
-                const db = await this.db;
-                var t = db.transaction(["deleted_ids"], "readwrite");
-                var store = t.objectStore("deleted_ids");
-                var ob = store.put('list', remove_ids);
-
-                await new Promise<Array<any>>((resolve, reject) => {
-                    ob.onsuccess = function (e) {
-                        resolve(ob.result);
-                    }
-                    ob.onerror = function (e) {
-                        reject(e);
-                    }
-                });
-
-                resolve(request.result);
-            }
-            request.onerror = (e) => {
-                console.log(e);
-            }
-        });
-    }
+    deleteOrder = this.remove
     async getTypes() {// TODO：如果Type模型变复杂了，转移到独立的Service中维护
         return TYPES
     }
