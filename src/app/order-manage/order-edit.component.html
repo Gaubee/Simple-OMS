@@ -8,7 +8,7 @@
                     </md-slide-toggle>
                 </md-card-title>
                 <md-card-subtitle>* 客户相关的信息在添加不同类目或者材料的子订单时是共享的。</md-card-subtitle>
-                <md-card-subtitle>* 订单锁定后，其类目材料信息会独立备份，意味着材料管理中改变材料信息不会影响当前订单所用的材料信息。</md-card-subtitle>
+                <md-card-subtitle>* 订单锁定后，其类目材料信息会独立备份，意味着材料管理中改变材料信息不会影响当前订单所用的材料信息。新建的订单会自动锁定</md-card-subtitle>
             </md-card-title-group>
             <my-date-picker [options]="myDatePickerOptions" (dateChanged)="onDateChanged($event)" [selDate]="showDate"></my-date-picker>
             <!--[selectedDate]="selectedDate"-->
