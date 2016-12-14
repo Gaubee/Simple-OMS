@@ -1,2 +1,5 @@
 node_modules
 dist
+.awcache
+YOMS-win32-x64
+YOMS-win32-x64.7z

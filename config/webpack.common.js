@@ -19,6 +19,7 @@ const HtmlElementsPlugin = require('./html-elements-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
 
 /*
  * Webpack Constants
@@ -102,6 +103,7 @@ module.exports = function (options) {
           test: /\.ts$/,
           use: [
             '@angularclass/hmr-loader?pretty=' + !isProd + '&prod=' + isProd,
+            // 'babel-loader?presets[]=es2015',
             'awesome-typescript-loader',
             'angular2-template-loader',
             'angular2-router-loader'
@@ -299,6 +301,13 @@ module.exports = function (options) {
         /facade(\\|\/)math/,
         helpers.root('node_modules/@angular/core/src/facade/math.js')
       ),
+      // new CompressionPlugin({
+      //     asset: "[path].gz[query]",
+      //     algorithm: "gzip",
+      //     test: /\.js$|\.html$/,
+      //     threshold: 10240,
+      //     minRatio: 0.8
+      // }),
     ],
 
     /*

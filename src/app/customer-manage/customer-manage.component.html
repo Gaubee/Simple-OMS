@@ -18,7 +18,7 @@
 <md-card *ngIf="!is_search_mode">
   <md-card-content class="customer-card-list">
     <template ngFor let-customer_item [ngForOf]="customer_list">
-      <app-customer-card class="customer-card" [customer]="customer_item" (on-removed)="getPages(true)" (on-submit)="onSubmitCustomer($event)"
+      <app-customer-card class="customer-card" [customer]="customer_item" (on-removed)="getPages(true)" (on-submit)="onSubmitCustomer($event, customer_item)"
         [edit-model]="customer_item.is_editing"></app-customer-card>
     </template>
   </md-card-content>

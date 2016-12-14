@@ -1,0 +1,14 @@
+<!--<md-card>-->
+  <md-card-title-group>
+    <md-icon md-card-avatar [style.color]="title.icon_color">{{title.icon_text}}</md-icon>
+    <md-card-title>{{title.text}}</md-card-title>
+  </md-card-title-group>
+  <md-card-content>
+    <p md-line></p>{{dialog_content}}
+    <p md-line *ngIf="dialog_subtitle"><i>{{dialog_subtitle}}</i></p>
+  </md-card-content>
+  <md-card-actions align="end">
+    <button md-raised-button type="button" color="warn" (click)="dialogRef.close(false)">取消</button>
+    <button md-raised-button type="button" color="primary" (click)="dialogRef.close(true)">确定</button>
+  </md-card-actions>
+<!--</md-card>-->

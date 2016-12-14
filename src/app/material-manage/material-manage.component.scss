@@ -11,7 +11,15 @@
     }
     md-grid-list.item {
         &:hover {
-            background: md-color($accent,0.2);
+            background: md-color($accent, 0.2);
         }
     }
+}
+
+.item-left {
+    flex: 1;
+}
+
+.item-right {
+    flex: 1;
 }

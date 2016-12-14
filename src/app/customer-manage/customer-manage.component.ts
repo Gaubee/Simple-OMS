@@ -42,6 +42,7 @@ export class CustomerManageComponent extends CustomerSearch implements OnInit {
         if (this.customer_list.length && this.customer_list[0].id == undefined) {// 已经是在增加状态了
           return
         }
+        var current_show_customer_num = this.show_customer_num;
         // 设置回掉函数
         this._customer_add_callback = () => {
           this.show_customer_num = 3;
@@ -49,7 +50,9 @@ export class CustomerManageComponent extends CustomerSearch implements OnInit {
           this.customer_list.unshift(Object.assign({ is_editing: true }, CUSTOMER_DEFAULT));
         }
         if (this.loaded_page_index == 0) {
-          this.customer_list.pop();
+          if (this.customer_list.length >= current_show_customer_num) {
+            this.customer_list.pop();
+          }
           this._customer_add_callback();
         } else {
           this.show_customer_num = 2;
@@ -119,9 +122,10 @@ export class CustomerManageComponent extends CustomerSearch implements OnInit {
       this._router.navigate(['./', { page: to_page_index }]);
     }
   }
-  onSubmitCustomer(res) {
+  onSubmitCustomer(res, customer_item) {
     console.log(res)
     if (res.is_new) {
+      customer_item.id = res.customer_id;//绑定ID
       // 数量变更，刷新分页信息
       this.getPagesInfo();
     }

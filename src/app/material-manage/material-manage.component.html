@@ -1,18 +1,5 @@
-<md-card>
-  <md-grid-list md-card-image class="headers" cols="3" rowHeight="48px">
-    <md-grid-tile>材料名称</md-grid-tile>
-    <md-grid-tile>单价</md-grid-tile>
-    <md-grid-tile>操作</md-grid-tile>
-  </md-grid-list>
-  <md-grid-list md-card-image class="item" *ngFor="let material_item of material_list" cols="3" rowHeight="32px">
-    <md-grid-tile>{{material_item.name}}</md-grid-tile>
-    <md-grid-tile>{{material_item.price}}￥/米</md-grid-tile>
-    <md-grid-tile>
-      <button md-icon-button md-tooltip="编辑" tooltip-position="before" (click)="goEdit(material_item)"><md-icon>edit</md-icon></button>
-      <button md-icon-button md-tooltip="删除" tooltip-position="after" (click)="delMat(material_item)"><md-icon>delete</md-icon></button>
-    </md-grid-tile>
-  </md-grid-list>
-  <md-card-footer *ngIf="is_loading_list_data">
-    <md-progress-bar mode="indeterminate"></md-progress-bar>
-  </md-card-footer>
-</md-card>
+<div style="display:flex">
+  <app-category-list class="item-left" (on-view-detail-category)="selected_category = $event"></app-category-list>
+  <app-material-list *ngIf="!selected_category" class="item-right"></app-material-list>
+  <app-category-material-list *ngIf="selected_category" class="item-right" [category]="selected_category"></app-category-material-list>
+</div>

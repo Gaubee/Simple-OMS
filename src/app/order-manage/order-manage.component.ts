@@ -22,6 +22,11 @@ import { CustomerService } from '../customer-manage/customer.service';
 import { copy } from '../common';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderSelectCustomerComponent } from './order-select-customer/order-select-customer.component'
+import { CommonDialogComponent } from '../common-dialog/common-dialog.component'
+
+interface SelectableOrder extends Order {
+  is_selected?: boolean
+}
 
 @Component({
   selector: 'app-order-manage',
@@ -29,12 +34,14 @@ import { OrderSelectCustomerComponent } from './order-select-customer/order-sele
   styleUrls: ['./order-manage.component.scss']
 })
 export class OrderManageComponent implements OnInit {
-  order_list: Order[]
+  order_list: SelectableOrder[]
   constructor(
     private _app: AppComponent,
     private _router: Router,
     private route: ActivatedRoute,
-    private _order_service: OrderService
+    private _order_service: OrderService,
+    public dialog: MdDialog
+
   ) { }
 
   is_loading_list_data: boolean
@@ -73,9 +80,9 @@ export class OrderManageComponent implements OnInit {
   loaded_page_index = 0;
   show_order_num = 10;
   private _total_num = -1;
-  async getPages() {
+  async getPages(force_get_page_info = false) {
     // 获取分页参数
-    if (this._total_num == -1) {//分页信息只获取一次
+    if (force_get_page_info || this._total_num == -1) {//分页信息只获取一次
       await this.getPagesInfo();
     }
     this.checkPageInfo();
@@ -104,12 +111,65 @@ export class OrderManageComponent implements OnInit {
     this.loaded_page_index = loading_page_index;
     this.order_list = orders;
     this.is_loading_list_data = false;
+    // 重置选中的订单数
+    this.selected_num = 0;
+    this.is_select_all = false;
   }
   pageJump(to_page_index) {
-    if(to_page_index!==null){
+    if (to_page_index !== null) {
       this._router.navigate(['./', { page: to_page_index }]);
     }
   }
+
+  common_dialog: MdDialogRef<CommonDialogComponent>
+  removeSelectedOrder() {
+    this.common_dialog = this.dialog.open(CommonDialogComponent, {
+      disableClose: true
+    });
+    const selected_orders = this.order_list.filter(order => order.is_selected)
+    this.common_dialog.afterClosed().subscribe(async result => {
+      console.log('result: ', result);
+      this.common_dialog = null;//释放窗口资源
+      if (result) {
+        this.is_loading_list_data = true;
+        await selected_orders.map(order => this._order_service.deleteOrder(order.id))
+        this.is_loading_list_data = false;
+        this.getPages(true);
+      }
+    });
+    const dialog_component = this.common_dialog.componentInstance;
+    dialog_component.dialog_content = `确认删除选中的${selected_orders.length}项订单？`;
+
+    // this._common_dialog.dialogRef.componentInstance.
+  }
+  /** 选择删除功能*/
+
+  is_select_all = false
+  toggleSelectAll() {
+    if (this.is_select_all) {//反选
+      this.order_list.forEach(order => {
+        order.is_selected = true
+      })
+      this.selected_num = this.order_list.length;
+    } else {//全选
+      this.order_list.forEach(order => {
+        order.is_selected = false
+      })
+      this.selected_num = 0;
+    }
+  }
+  // 已选中的元素数量
+  selected_num = 0;
+  // 选中删除功能
+  itemSelected(order: SelectableOrder, list_index) {
+    if (order.is_selected) {
+      this.selected_num += 1;
+    } else {
+      this.selected_num -= 1;
+    }
+    this.is_select_all = this.selected_num === this.order_list.length
+  }
+
 }
 
 @Pipe({ name: 'fixed' })

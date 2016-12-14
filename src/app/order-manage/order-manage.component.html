@@ -1,7 +1,7 @@
 <md-card>
   <md-grid-list md-card-image class="headers" cols="6" rowHeight="48px">
     <md-grid-tile>
-      <md-checkbox>全选</md-checkbox>
+      <md-checkbox [(ngModel)]="is_select_all" (change)="toggleSelectAll()">{{is_select_all?'反选':'全选'}}</md-checkbox>
     </md-grid-tile>
     <md-grid-tile>顾客</md-grid-tile>
     <md-grid-tile>联系方式</md-grid-tile>
@@ -11,7 +11,7 @@
   </md-grid-list>
   <md-grid-list md-card-image class="item" *ngFor="let order of order_list" cols="6" rowHeight="32px">
     <md-grid-tile>
-      <md-checkbox>{{order.id}}</md-checkbox>
+      <md-checkbox [(ngModel)]="order.is_selected" (change)="itemSelected(order,i)">{{order.id}}</md-checkbox>
     </md-grid-tile>
     <md-grid-tile>{{order.customer.name}}</md-grid-tile>
     <md-grid-tile>{{order.customer.phone}}</md-grid-tile>
@@ -19,10 +19,12 @@
     <md-grid-tile>{{order.order_price|fixed}}元</md-grid-tile>
     <md-grid-tile>
       <button md-icon-button md-tooltip="编辑" tooltip-position="before" (click)="goEditOrder(order)"><md-icon>edit</md-icon></button>
-      <button md-icon-button md-tooltip="删除" tooltip-position="after" (click)="deleteOrder(order)"><md-icon>delete</md-icon></button>
+      <!--<button md-icon-button md-tooltip="删除" tooltip-position="after" (click)="deleteOrder(order)"><md-icon>delete</md-icon></button>-->
     </md-grid-tile>
   </md-grid-list>
   <md-card-content class="pages">
+    <button (click)="removeSelectedOrder()" color="warn" md-button [disabled]="selected_num==0"><md-icon>delete</md-icon>删除选中订单</button>
+
     <md-button-toggle-group [(ngModel)]="current_page_index" (ngModelChange)="pageJump(current_page_index)">
       <!--不能使用ngModelChange来绑定事件，因为前一页和后一页的数据绑定时动态的，一旦使用ngModelChange绑定会造成持续触发-->
       <md-button-toggle value=0 [disabled]="loaded_page_index == 0">

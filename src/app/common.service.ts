@@ -121,9 +121,13 @@ export class IndexedDBService {
         const db = await this.db;
         var t = db.transaction(["list"], "readonly");
         var store = t.objectStore("list");
-
+        if (dynamic_configuration.DESC) {
+            var direction = "prev"
+        } else {
+            var direction = "next"
+        }
         // >= start_index
-        var cursor = store.openCursor();
+        var cursor = store.openCursor(null, direction);
 
         var before_customers = [];
         var id_key = dynamic_configuration.id_key || "id";
@@ -246,5 +250,86 @@ export class IndexedDBService {
             }
             request.onerror = reject
         });
+    }
+}
+
+export interface SearchResultWithWeight {
+    weight?: number
+}
+// 搜索功能拓展类
+export class CommonSearch<T> {
+    constructor(
+        public _service: IndexedDBService,
+        public search_keys: string[]
+    ) { }
+
+    search_text = "";
+    search_list: (T & SearchResultWithWeight)[] = [];
+    show_search_list_num = 3; // 显示10个
+    is_search_able = false;
+    is_searching = false;
+    currrent_dynamic_configuration: any = {}
+    private _search_pid: number //用于校验搜索结果属于正确的搜索进程中
+    search_progress = 0;
+    async search() {
+        var search_text = this.search_text.trim();
+        // 中断上一次搜索
+        this.currrent_dynamic_configuration.is_stop = true;
+        // 重置新的搜索配置
+        this.currrent_dynamic_configuration = {};
+        // 清空数据
+        this.search_list = [];
+        if (search_text) {
+            this.search_progress = 0; //重置进度条
+            this.is_search_able = true;
+            this.is_searching = true;
+            var weight_list = [];
+            var total_count = await this._service.getCount();
+            var _search_progress = 0;
+            var _search_pid = this._search_pid = Math.random();
+            await this._service.getListByFilter<T>((item) => {
+                if (_search_pid !== this._search_pid) { // 搜索进程对应有误
+                    return
+                }
+                var total_weight = this.search_keys.reduce((weight, key) => weight + CommonSearch.getSearchWeight(item[key], search_text), 0)
+                if (total_weight) {
+                    this.search_list.push(Object.assign({
+                        weight: total_weight
+                    }, item));
+                    this.search_list.sort((item_a, item_b) => item_b.weight - item_a.weight);
+                    if (this.search_list.length > this.show_search_list_num) {
+                        this.search_list.length = this.show_search_list_num
+                    }
+                }
+                _search_progress += 1;
+                this.search_progress = _search_progress / total_count * 100;
+                return total_weight > 0;
+            }, 0, total_count, this.currrent_dynamic_configuration)
+            this.is_searching = false;
+        } else {
+            this.is_search_able = false;
+        }
+        return this.search_list;
+    }
+    static getSearchWeight(source_text: string, search_text: string) {
+        var weight = 0;
+        var mul_match_score = 0; // 连续匹配的分数
+        var pre_match_index = -1;
+        for (var i = 0, len = search_text.length; i < len; i += 1) {
+            if (source_text.indexOf(search_text.charAt(i)) !== -1) {
+                if (pre_match_index === i - 1) {
+                    mul_match_score += 1;
+                } else {
+                    // 匹配中断，重置连续匹配的分数加成
+                    mul_match_score = 1;
+                }
+                weight += mul_match_score;
+                pre_match_index = i;
+            } else {
+                // 匹配中断，重置连续匹配的分数加成
+                mul_match_score = 1;
+            }
+        }
+        return weight;
     }
 }

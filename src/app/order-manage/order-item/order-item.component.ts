@@ -17,8 +17,14 @@ import {
 } from '@angular/core';
 import { copy } from '../../common';
 import { Type, OrderService, Size, OrderNode, SIZE_DEFAULT } from '../order.service';
-import { MaterialService, Material } from '../../material-manage/material.service';
+import {
+  MaterialService, Material
+  , Category, CategoryService
+} from '../../material-manage/material.service';
 import { Subject, Observable, Subscription } from 'rxjs';
+import {
+  MdSnackBar, MdSnackBarConfig
+} from '@angular/material';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,9 +33,10 @@ import { Subject, Observable, Subscription } from 'rxjs';
   styleUrls: ['./order-item.component.css']
 })
 export class OrderItemComponent implements OnInit, OnChanges {
-  type_options: Type[] = [];
+  type_options: Category[] = [];
   material_options: Material[] = [];
   @Input('order-node') order_node: OrderNode// = { size_list: [copy(SIZE_DEFAULT)] }
+  @Input('is-safe-lock') is_safe_lock: boolean
   ob_type_id = new Subject();
   ob_material_id = new Subject();
 
@@ -47,17 +54,26 @@ export class OrderItemComponent implements OnInit, OnChanges {
   constructor(
     public _order_service: OrderService,
     public _material_service: MaterialService,
-    public _change_detector_ref: ChangeDetectorRef
+    public _category_service: CategoryService,
+    public _change_detector_ref: ChangeDetectorRef,
+    public _snack_bar: MdSnackBar
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty('order_node')) {
       var new_order_node: OrderNode = changes["order_node"].currentValue;
-      console.log("change new_order_node:", new_order_node);
-      this.ob_type_id.next('-1');
-      this.ob_material_id.next('-1');
-      this.setObTypeId(new_order_node.type_id);
-      this.setObMaterialId(new_order_node.material_id);
+    }
+    if (changes.hasOwnProperty('is_safe_lock')) {
+      if (!this.is_safe_lock) {
+        if (this.type_options && this.type_options.length) {
+          this.setObTypeId()
+        } else {
+          this._category_service.getCategorys(0, Infinity).then(types => {
+            this.type_options = types
+            this.setObTypeId()
+          });
+        }
+      }
     }
   }
   setObTypeId(id = this.order_node.type_id) {
@@ -72,23 +88,30 @@ export class OrderItemComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this._order_service.getTypes().then(types => {
-      this.type_options = types
-      this.setObTypeId()
-    });
-    this._material_service.getMaterials().then(materials => {
-      this.material_options = materials
-      this.setObMaterialId()
-    });
     // 重新计算面积
     this.order_node.size_list.forEach((_, i) => this.computeSizeArea(i));
-
     // 获取引用对象详细数据
     this.ob_type_id.subscribe(async (type_id: string) => {
       console.log("type_id:", type_id)
       this.order_node.type_id = type_id;
-      this.order_node.type = await this._order_service.getTypeById(type_id);
+      this.order_node.type = await this._category_service.getCategoryById(type_id);
       setTimeout(_ => this._change_detector_ref.markForCheck());// 列表更新，手动触发重绘
+
+      this._material_service.getMaterialsByCategoryId(type_id, 0, Infinity).then(materials => {
+        this.material_options = materials;
+        // 材料选项重置
+        if (this.order_node && this.order_node.material_id) {
+          if (!materials.some(material => material.id == this.order_node.material_id)) {
+            this.order_node.material = null;
+            this.order_node.material_id = null;
+          }
+        }
+        this.setObMaterialId();
+        if (!materials.length) {
+          var snack_bar_ref = this._snack_bar.open("指定类目无可选材料，请到“材料管理”中添加");
+          setTimeout(() => snack_bar_ref.dismiss(), 8000);
+        }
+      });
     });
     this.ob_material_id.subscribe(async (material_id: string) => {
       console.log("material_id:", material_id)

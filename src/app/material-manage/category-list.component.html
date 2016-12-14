@@ -1,0 +1,45 @@
+<md-card>
+    <md-card-title-group>
+        <md-card-title>类目列表</md-card-title>
+        <!--<md-input placeholder="快速类目搜索">
+            <md-icon md-suffix>search</md-icon>
+        </md-input>-->
+    </md-card-title-group>
+    <md-grid-list md-card-image class="headers" cols="3" rowHeight="48px">
+        <md-grid-tile>
+            <md-checkbox [(ngModel)]="is_select_all" (change)="toggleSelectAll()">{{is_select_all?'反选':'全选'}}</md-checkbox>
+        </md-grid-tile>
+        <md-grid-tile>名称</md-grid-tile>
+        <md-grid-tile>操作</md-grid-tile>
+    </md-grid-list>
+    <p md-line *ngIf="this.is_loading_list_data"><i>数据加载中……</i></p>
+    <p md-line *ngIf="!this.is_loading_list_data&&!category_list.length"><i>无数据</i></p>
+    <md-grid-list md-card-image class="item" *ngFor="let category_item of category_list;let i = index" cols="3" rowHeight="64px">
+        <template [ngIf]="category_item.is_editing">
+            <md-grid-tile colspan=2>
+                <md-input style="min-width:80%" placeholder="类目名称" [(ngModel)]="category_item.editing_name" maxlength="25"></md-input>
+            </md-grid-tile>
+            <md-grid-tile>
+                <button (click)="cancelEditCategory(category_item,i)" md-icon-button md-tooltip="取消" tooltip-position="before"><md-icon>close</md-icon></button>
+                <button (click)="submitCategoryData(category_item)" md-icon-button md-tooltip="提交" tooltip-position="after"><md-icon>check</md-icon></button>
+            </md-grid-tile>
+        </template>
+        <template [ngIf]="!category_item.is_editing">
+            <md-grid-tile>
+                <md-checkbox [(ngModel)]="category_item.is_selected" (change)="itemSelected(category_item,i)">{{category_item.id}}</md-checkbox>
+            </md-grid-tile>
+            <md-grid-tile>{{category_item.name}}</md-grid-tile>
+            <md-grid-tile>
+                <button (click)="editCategory(category_item)" md-icon-button md-tooltip="编辑" tooltip-position="before"><md-icon>edit</md-icon></button>
+                <button (click)="onViewDetailCategory.emit(category_item)" md-icon-button md-tooltip="查看详情" tooltip-position="after"><md-icon>remove_red_eye</md-icon></button>
+            </md-grid-tile>
+        </template>
+    </md-grid-list>
+    <md-card-footer>
+        <md-progress-bar *ngIf="is_loading_list_data" mode="indeterminate"></md-progress-bar>
+    </md-card-footer>
+    <md-card-actions align="end">
+        <button (click)="removeSelectedCategory()" color="warn" md-button [disabled]="selected_num==0"><md-icon>delete</md-icon>删除选中类目</button>
+        <button (click)="addNewCategory()" md-raised-button color="primary" [disabled]="!category_list"><md-icon>create_new_folder</md-icon>新增类目</button>
+    </md-card-actions>
+</md-card>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Customer, CustomerService } from '../customer-manage/customer.service';
-import { Material, MaterialService } from '../material-manage/material.service';
+import { Material, MaterialService, Category } from '../material-manage/material.service';
 import { copy } from '../common';
 import { IndexedDBService, DynamicConfiguration } from '../common.service';
 
@@ -17,11 +17,14 @@ export interface Order {
     remark?: string
 
     create_time?: Date
+
+    // 编辑保护
+    is_lock?: boolean
 }
 export interface OrderNode {
 
     type_id?: string,
-    type?: Type,
+    type?: Category,
     material_id?: string,
     material?: Material,
 
@@ -106,19 +109,21 @@ export class OrderService extends IndexedDBService {
     getOrderById(id): Promise<Order> {
         return this.getById<Order>(id)
     }
-    async wrapFullOrder(order: Order): Promise<Order> {
+    // async wrapFullOrder(order: Order): Promise<Order> {
 
-        var customer_promise = this._customer_service.getCustomerById(order.customer_id);
-        order.customer = await customer_promise;
-        order.nodes.forEach(async node => {
-            var material_promise = this._material_service.getMaterialById(node.material_id);
-            var type_promise = this.getTypeById(node.type_id);
-            node.material = await material_promise;
-            node.type = await type_promise;
-        });
-        return order;
-    }
+    //     var customer_promise = this._customer_service.getCustomerById(order.customer_id);
+    //     order.customer = await customer_promise;
+    //     order.nodes.forEach(async node => {
+    //         var material_promise = this._material_service.getMaterialById(node.material_id);
+    //         var type_promise = this.getTypeById(node.type_id);
+    //         node.material = await material_promise;
+    //         node.type = await type_promise;
+    //     });
+    //     return order;
+    // }
     async addOrder(new_order: Order): Promise<number> {
+        new_order.create_time = new Date;
+        new_order.is_lock = true;//锁定加以保护
         if (!new_order.customer_id) {// 如果没有用户ID，进行创建,TODO:弃用这个多余的保护
             new_order.customer_id = String(await this._customer_service.addCustomer(new_order.customer));
         }
@@ -128,21 +133,4 @@ export class OrderService extends IndexedDBService {
         return this.update(id, order)
     }
     deleteOrder = this.remove
-    async getTypes() {// TODO：如果Type模型变复杂了，转移到独立的Service中维护
-        return TYPES
-    }
-    async getTypeById(id) {
-        var res: Type;
-
-        TYPES.some(type => {
-            if (type.id == id) {
-                res = type
-                return true;
-            }
-        });
-        if (!res) {
-            throw new ReferenceError("type no found:" + id)
-        }
-        return res;
-    }
 }

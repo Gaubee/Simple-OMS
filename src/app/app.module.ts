@@ -27,17 +27,22 @@ import { NavComponent } from './nav/nav.component';
 import { OrderManageComponent, OrderAddComponent, OrderUpdateComponent, FixedPipe, FocusDirective } from './order-manage/order-manage.component';
 import { OrderItemComponent, OrderItemListComponent } from './order-manage/order-item/order-item.component';
 import { OrderSelectCustomerComponent } from './order-manage/order-select-customer/order-select-customer.component';
-import { MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent } from './material-manage/material-manage.component';
+import {
+  MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent,
+  CategoryListComponent, CategoryMaterialListComponent,
+  MaterialListComponent
+} from './material-manage/material-manage.component';
 import { CustomerManageComponent, CustomerCardComponent } from './customer-manage/customer-manage.component';
 import { CustomerEditComponent } from './customer-manage/customer-edit/customer-edit.component';
 import { SettingsComponent } from './settings/settings.component';
+import { CommonDialogComponent } from './common-dialog/common-dialog.component';
 
 import { MaterialModule } from '@angular/material';
 import { MdSelectModule } from './md-dev-com/select';
 import 'hammerjs';
 
 // Services
-import { MaterialService } from './material-manage/material.service'
+import { MaterialService, CategoryService } from './material-manage/material.service'
 import { OrderService } from './order-manage/order.service'
 import { CustomerService } from './customer-manage/customer.service'
 
@@ -69,11 +74,15 @@ type StoreType = {
     , NavComponent
     , OrderManageComponent, OrderAddComponent, OrderUpdateComponent, OrderSelectCustomerComponent
     , MaterialManageComponent, MaterialAddComponent, MaterialUpdateComponent
+    , CategoryListComponent, CategoryMaterialListComponent
+    , MaterialListComponent
     , CustomerEditComponent, CustomerManageComponent, CustomerCardComponent
     , SettingsComponent
 
     , FixedPipe, FocusDirective
     , OrderItemComponent, OrderItemListComponent
+    ,
+    CommonDialogComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -87,11 +96,11 @@ type StoreType = {
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
-    MaterialService,
+    MaterialService, CategoryService,
     OrderService,
     CustomerService,
   ],
-  entryComponents: [DialogContent, OrderSelectCustomerComponent],
+  entryComponents: [DialogContent, OrderSelectCustomerComponent, CommonDialogComponent],
 })
 export class AppModule {
   constructor(public appRef: ApplicationRef, public appState: AppState) { }
