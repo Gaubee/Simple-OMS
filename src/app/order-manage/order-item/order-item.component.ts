@@ -58,23 +58,32 @@ export class OrderItemComponent implements OnInit, OnChanges {
     public _change_detector_ref: ChangeDetectorRef,
     public _snack_bar: MdSnackBar
   ) { }
+  is_loading_type_list: boolean
+  is_loading_material_list: boolean
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty('order_node')) {
       var new_order_node: OrderNode = changes["order_node"].currentValue;
     }
     if (changes.hasOwnProperty('is_safe_lock')) {
-      if (!this.is_safe_lock) {
+      if (!this.is_lock()) {
         if (this.type_options && this.type_options.length) {
           this.setObTypeId()
         } else {
+          this.is_loading_type_list = true;
           this._category_service.getCategorys(0, Infinity).then(types => {
+            this.is_loading_type_list = false;
+
             this.type_options = types
             this.setObTypeId()
           });
         }
       }
     }
+  }
+  is_lock() {
+    const order_node = this.order_node;
+    return this.is_safe_lock && order_node && order_node.material;
   }
   setObTypeId(id = this.order_node.type_id) {
     if (id && this.type_options && this.type_options.length) {
@@ -97,7 +106,9 @@ export class OrderItemComponent implements OnInit, OnChanges {
       this.order_node.type = await this._category_service.getCategoryById(type_id);
       setTimeout(_ => this._change_detector_ref.markForCheck());// 列表更新，手动触发重绘
 
+      this.is_loading_material_list = true;
       this._material_service.getMaterialsByCategoryId(type_id, 0, Infinity).then(materials => {
+        this.is_loading_material_list = false;
         this.material_options = materials;
         // 材料选项重置
         if (this.order_node && this.order_node.material_id) {

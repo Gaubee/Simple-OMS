@@ -294,8 +294,9 @@ class OrderEditBase {
       this.customer_select_dialog = null;//释放窗口资源
       if (result) {
         this.order.customer_id = result;
-        this.getSelectedCustomerData();
       }
+      //强行刷新顾客信息，可能顾客ID不变但是信息被修改了
+      this.getSelectedCustomerData();
     });
     const dialog_component = this.customer_select_dialog.componentInstance;
     dialog_component.selected_customer_id = this.order.customer_id;

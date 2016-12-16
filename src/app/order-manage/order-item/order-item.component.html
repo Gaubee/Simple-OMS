@@ -1,19 +1,29 @@
 <md-card>
   <md-grid-list cols=2 rowHeight="65px" class="order-detail">
     <md-grid-tile>
-      <md-input *ngIf="is_safe_lock&&order_node&&order_node.type" disabled required placeholder="类目" [value]="order_node.type.name"></md-input>
-      <md-select *ngIf="!is_safe_lock" class="item-left-with-space" required placeholder="类目" [(ngModel)]="order_node.type_id"
+      <md-input *ngIf="is_lock()" disabled required placeholder="类目" [value]="order_node.type.name"></md-input>
+      <md-select *ngIf="!is_lock()" class="item-left-with-space" required [placeholder]="is_loading_type_list?'加载类目中……':'类目'" [(ngModel)]="order_node.type_id"
         (ngModelChange)="setObTypeId($event)">
         <md-option *ngFor="let type_option of type_options" [value]="type_option.id"> {{ type_option.name }} </md-option>
       </md-select>
     </md-grid-tile>
     <md-grid-tile>
-      <md-input *ngIf="is_safe_lock&&order_node&&order_node.material" disabled required placeholder="材料" [value]="order_node.material.name + '：' + order_node.material.price + '元/cm²'"></md-input>
-      <md-select *ngIf="!is_safe_lock" class="item-right-with-space" [disabled]="!material_options.length" required placeholder="{{material_options.length?'材料':'此类目无可选材料'}}"
+      <md-input [disabled]="is_lock()" plcaholder="颜色" [(ngModel)]="order_node.color"></md-input>
+    </md-grid-tile>
+    <md-grid-tile>
+      <md-input *ngIf="is_lock()" disabled required placeholder="材料" [value]="order_node.material.name + '：' + order_node.material.price + '元/cm²'"></md-input>
+      <md-select *ngIf="!is_lock()" class="item-right-with-space" [disabled]="!material_options.length" required [placeholder]="is_loading_material_list?'加载材料中……':(material_options.length?'材料':'此类目无可选材料')"
         [(ngModel)]="order_node.material_id" (ngModelChange)="setObMaterialId($event)">
-        <md-option *ngFor="let material_option of material_options" [value]="material_option.id"> {{ material_option.name }}：{{ material_option.price }}元/cm² </md-option>
+        <md-option *ngFor="let material_option of material_options" [value]="material_option.id"> {{ material_option.name }}</md-option>
       </md-select>
     </md-grid-tile>
+    <md-grid-tile>
+      <md-input [disabled]="is_lock()" required placeholder="材料价格" type="number" min=0 step=0.1 [(ngModel)]="order_custom_price">
+        <span md-suffix>元</span>
+      </md-input>
+    </md-grid-tile>
+  </md-grid-list>
+  <md-grid-list cols=2 rowHeight="65px" class="order-detail">
     <md-grid-tile>
       <md-input class="item-left-with-space" placeholder="加工备注" [(ngModel)]="order_node.machining_remark"></md-input>
     </md-grid-tile>
@@ -25,6 +35,15 @@
     </md-grid-tile>
   </md-grid-list>
   <br>
+  <md-divider></md-divider>
+  <br>
+  <br>
+  <md-card-title>材料价格计算方案：</md-card-title>
+  <md-radio-group [(ngModel)]="computeType">
+    <md-radio-button value="面积">面积</md-radio-button>
+    <md-radio-button value="长度">长度</md-radio-button>
+    <!--<md-radio-button value="周长">周长</md-radio-button>-->
+  </md-radio-group>
   <md-divider></md-divider>
   <br>
   <br>
