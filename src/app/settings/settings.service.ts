@@ -6,7 +6,7 @@ import { CustomerService } from '../customer-manage/customer.service'
 import { IndexedDBService } from '../common.service'
 @Injectable()
 export class SettingsService {
-    base_url = "http://localhost:8860/backups/";
+    base_url = "http://120.24.62.117:8860/backups/";
     dbs: IndexedDBService[]
     constructor(
         public http: Http,

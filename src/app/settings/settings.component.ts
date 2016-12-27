@@ -54,7 +54,7 @@ export class SettingsComponent implements OnInit {
     var formData = new FormData();
     formData.append("db", blob);
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:8860/backups");
+    xhr.open("POST", this._setting_service.base_url);
     xhr.send(formData);
     xhr.onload = () => {
       var snackbarref = this._snackbar.open("备份完成");
