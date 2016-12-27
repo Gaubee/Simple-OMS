@@ -1,9 +1,3 @@
-## TODO
-[x] 订单管理的分页
-[x] 订单管理的批量操作功能
-[x] 订单管理的删除
-[x] 顾客管理的分页
-[x] 顾客管理的搜索
-[x] 材料管理的分类实现
-[x] 修复分页功能数据丢失的BUG
-[ ] 订单打印功能
+# Simple Order Manage System
+
+一个Angular（v2）学习项目，基于官方[materialUI](https://github.com/angular/material2)制作
