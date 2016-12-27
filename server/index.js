@@ -12,10 +12,10 @@ const app = koa();
 
 const Backups = {
     get() {
-        return JSON.parse(localStorage.getItem("backups")) || [];
+        return JSON.parse(localStorage.getItem("backups.json")) || [];
     },
     set(backups) {
-        localStorage.setItem("backups", JSON.stringify(backups))
+        localStorage.setItem("backups.json", JSON.stringify(backups))
     },
     add(backup) {
         var backups = Backups.get();
