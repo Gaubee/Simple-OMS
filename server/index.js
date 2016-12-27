@@ -110,7 +110,6 @@ app.use(function* (next) {
             }
             let md5_hash_builder = crypto.createHash('md5');
             md5_hash_builder.update(fileData);
-            console.log(fileData.toString());
 
             let hash = md5_hash_builder.digest('hex');
             let key = hash + '.jsondb';
