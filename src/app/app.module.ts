@@ -45,6 +45,7 @@ import 'hammerjs';
 import { MaterialService, CategoryService } from './material-manage/material.service'
 import { OrderService } from './order-manage/order.service'
 import { CustomerService } from './customer-manage/customer.service'
+import { SettingsService } from './settings/settings.service';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -99,6 +100,7 @@ type StoreType = {
     MaterialService, CategoryService,
     OrderService,
     CustomerService,
+    SettingsService,
   ],
   entryComponents: [DialogContent, OrderSelectCustomerComponent, CommonDialogComponent],
 })

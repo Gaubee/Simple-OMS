@@ -6,6 +6,7 @@ import { Component, ViewEncapsulation, Optional } from '@angular/core';
 import { AppState } from './app.service';
 import { MdDialog, MdDialogRef, MdSnackBar } from '@angular/material';
 import { mix_options, copy } from "./common";
+import { Router, NavigationStart } from '@angular/router';
 
 interface FabButtonHandle {
     button_text?: string;
@@ -94,13 +95,23 @@ export class AppComponent {
         this.toolbar_buttons = options_list.map(options => mix_options(copy(DEFAULT_ICON_HANDLE), options))
     }
 
+
     constructor(
         public appState: AppState,
+        private router: Router,
         private _dialog: MdDialog,
         private _snackbar: MdSnackBar) {
-        setInterval(() => {
-            this.progress = (this.progress + Math.floor(Math.random() * 4) + 1) % 100;
-        }, 200);
+        // setInterval(() => {
+        //     this.progress = (this.progress + Math.floor(Math.random() * 4) + 1) % 100;
+        // }, 200);
+        this.router.events.subscribe((val) => {
+            console.log('qaq', val)
+            if (val instanceof NavigationStart) {
+                if (this.router.url.split(';')[0] !== val.url.split(';')[0]) {
+                    this.mixIconButtons([])
+                }
+            }
+        });
     }
 
     ngOnInit() {

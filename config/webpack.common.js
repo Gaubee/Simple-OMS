@@ -317,13 +317,18 @@ module.exports = function (options) {
      * See: https://webpack.github.io/docs/configuration.html#node
      */
     node: {
+      fs: 'empty',
       global: true,
       crypto: 'empty',
       process: true,
       module: false,
       clearImmediate: false,
       setImmediate: false
-    }
-
+    },
+    externals: [
+      {
+        './cptable': 'var cptable'
+      }
+    ]
   };
 }

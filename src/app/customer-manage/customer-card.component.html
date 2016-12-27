@@ -1,7 +1,7 @@
 <md-card *ngIf="!customer_item.is_editing">
     <md-card-header [ngClass]="{blur: customer_item.is_to_remove}">
         <img md-card-avatar [src]="customer_item.avatar">
-        <md-card-title>{{customer_item.id}}|{{customer_item.name}}</md-card-title>
+        <md-card-title>{{customer_item.name}}</md-card-title>
         <md-card-subtitle>{{customer_item.phone}}</md-card-subtitle>
     </md-card-header>
     <md-card-title-group [ngClass]="{blur: customer_item.is_to_remove}">
@@ -12,7 +12,7 @@
     </md-card-title-group>
     <div *ngIf="customer_item.is_to_remove" class="remove-customer-confirm-dialog" style="display:flex;align-items: center;">
         <div style="flex:auto">
-            <md-card-title style="text-align:center;">确定删除顾客：{{customer_item.name}}？</md-card-title>
+            <md-card-title style="text-align:center;">确定删除客户：{{customer_item.name}}？</md-card-title>
             <button md-icon-button (click)="customer_item.is_to_remove = false" md-tooltip="不删除" tooltip-position="before"><md-icon>clear</md-icon></button>
             <button md-icon-button (click)="removeCustomer()" md-tooltip="确定删除" tooltip-position="after"><md-icon>check</md-icon></button>
         </div>

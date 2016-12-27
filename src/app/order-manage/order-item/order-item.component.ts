@@ -16,7 +16,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { copy } from '../../common';
-import { Type, OrderService, Size, OrderNode, SIZE_DEFAULT } from '../order.service';
+import { Type, OrderService, Size, OrderNode, SIZE_DEFAULT, CalcType } from '../order.service';
 import {
   MaterialService, Material
   , Category, CategoryService
@@ -39,6 +39,11 @@ export class OrderItemComponent implements OnInit, OnChanges {
   @Input('is-safe-lock') is_safe_lock: boolean
   ob_type_id = new Subject();
   ob_material_id = new Subject();
+  CalcType = CalcType;
+  get CalcTypeNames() {
+    var keys = Object.keys(CalcType);
+    return keys.filter((k: number | string) => k != (<number>k | 0));
+  };
 
   @Output('on-total-price-change') onTotalPriceChange = new EventEmitter();
 
@@ -143,19 +148,68 @@ export class OrderItemComponent implements OnInit, OnChanges {
     this.computeTotalPrice();
     return area;
   }
-
   computeTotalPrice() {
     const order_node = this.order_node;
-    var material = order_node.material
-    var total_price = parseFloat(order_node.machining_price + "") || 0;
-    if (material) {
-      total_price += order_node.size_list.reduce((v, size) => v + size.area * material.price, 0);
-    }
+
+    var total_price = this.calc_fun(this);
+
     if (order_node.total_price !== total_price) {
       var old_value = order_node.total_price;
       order_node.total_price = total_price;
       this.onTotalPriceChange.emit(new SimpleChange(old_value, total_price));
     }
+  }
+
+  show_unit() {
+    var res = "米²"
+    if (this.order_node) {
+      switch (this.order_node.calcType) {
+        case CalcType.长度:
+          res = "米"
+          break;
+        case CalcType.面积:
+          res = "米²"
+          break;
+      }
+    }
+    return res;
+  }
+  static CalcFuns = {
+    面积: (self: OrderItemComponent) => {
+      const order_node = self.order_node;
+      var material = order_node.material
+      var total_price = parseFloat(order_node.machining_price + "") || 0;
+      var unit_price = 0;
+
+      if (material) {
+        unit_price = material.price;
+      }
+      if (order_node.custom_material_price) {
+        unit_price = order_node.custom_material_price;
+      }
+      total_price += order_node.size_list.reduce((v, size) => v + size.area * unit_price, 0);
+      return total_price;
+    },
+    长度: (self: OrderItemComponent) => {
+      const order_node = self.order_node;
+      var material = order_node.material
+      var total_price = parseFloat(order_node.machining_price + "") || 0;
+      var unit_price = 0;
+
+      if (material) {
+        unit_price = material.price;
+      }
+      if (order_node.custom_material_price) {
+        unit_price = order_node.custom_material_price;
+      }
+      total_price += order_node.size_list.reduce((v, size) => v + size.width * unit_price, 0);
+      return total_price;
+    },
+  }
+  calc_fun = OrderItemComponent.CalcFuns.面积
+  onCalcTypeChange() {
+    this.calc_fun = OrderItemComponent.CalcFuns[CalcType[this.order_node.calcType]];
+    this.computeTotalPrice();
   }
 }
 

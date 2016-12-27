@@ -32,7 +32,8 @@
             <br>
             <md-card-title>总计：{{order.order_price|fixed}}元</md-card-title>
             <md-card-actions align="end">
-                <button md-raised-button color="primary"><md-icon>print</md-icon><span class="md-button-text">打印</span></button>
+                <button (click)="printXlSX(true)" md-raised-button color="primary"><md-icon>print</md-icon><span class="md-button-text">导出（无价格信息）</span></button>
+                <button (click)="printXlSX()" md-raised-button color="primary"><md-icon>print</md-icon><span class="md-button-text">导出</span></button>
             </md-card-actions>
         </md-card>
     </div>
@@ -48,8 +49,8 @@
             <md-tab-group md-card-image [(selectedIndex)]="activeTabIndex">
                 <md-tab *ngFor="let order_node of order.nodes; let i = index">
                     <template md-tab-label>
-                        {{i+1}}. {{order_node.type?.value||'类目'}}：{{order_node.material?.name||'材料'}}
-                        <button md-icon-button>
+                        {{i+1}}. {{order_node.type?.name||'类目'}}：{{order_node.material?.name||'材料'}}
+                        <button (click)="removeOrderNode(order_node,i)" md-icon-button>
                             <md-icon style="vertical-align: middle;">close</md-icon>
                         </button>
                     </template>

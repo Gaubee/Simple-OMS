@@ -22,7 +22,7 @@ function createWindow() {
 		minimizable: false,
 		movable: false,
 		icon: `file://${__dirname}/128.ico`,
-		backgroundColor: "#80FFFFFF",
+		backgroundColor: "#00FFFFFF",
 		// darkTheme:true
 		// skipTaskbar: true
 	});
@@ -33,7 +33,7 @@ function createWindow() {
 		show: false,
 		fullscreen: false,
 		minWidth: 1000,
-		width: 1000,
+		width: 1200,
 		height: 700,
 		frame: true,
 		toolbar: false,

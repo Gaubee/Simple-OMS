@@ -32,6 +32,8 @@ Thumbs.db
 
 # Node Files #
 /node_modules
+/server/node_modules
+/server/uploads
 /bower_components
 npm-debug.log
 
@@ -55,6 +57,8 @@ npm-debug.log
 .webpack.json
 /YOMS-win32-x64
 YOMS-win32-x64.7z
+/YOMS-win32-ia32
+YOMS-win32-ia32.7z
 
 # Doc #
 /doc/

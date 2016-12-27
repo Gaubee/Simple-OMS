@@ -33,11 +33,11 @@ export class CustomerManageComponent extends CustomerSearch implements OnInit {
 
     // 面板配置初始化
     const app = this._app;
-    app.toolbar_title = "顾客管理";
+    app.toolbar_title = "客户管理";
     app.mixFabButtonDefault({
       enabled: true,
       button_text: "person_add",
-      button_tooltip: "添加顾客",
+      button_tooltip: "添加客户",
       click_event: () => {
         if (this.customer_list.length && this.customer_list[0].id == undefined) {// 已经是在增加状态了
           return
@@ -64,11 +64,12 @@ export class CustomerManageComponent extends CustomerSearch implements OnInit {
 
     var icon_buttons = [{
       button_text: "search",
-      button_tooltip: "搜索顾客",
+      button_tooltip: "搜索客户",
       click_event: () => {
         this.is_search_mode = !this.is_search_mode;
       }
     }]
+    console.log("MIX BUTTon");
     app.mixIconButtons(icon_buttons);
 
     // 加载数据
@@ -191,7 +192,7 @@ export class CustomerCardComponent implements OnChanges {
     // this.customer_list.splice(list_index, 1);
     this.onRemoved.emit(customer);
 
-    var snackbarref = this._snackbar.open(`成功删除顾客：${customer.name}`);
+    var snackbarref = this._snackbar.open(`成功删除客户：${customer.name}`);
     setTimeout(() => snackbarref.dismiss(), 2000);// 定时关闭
   }
 

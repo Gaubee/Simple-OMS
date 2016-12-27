@@ -185,12 +185,34 @@ export class IndexedDBService {
         });
     }
 
-    async add<T>(new_item: T) {
+    async add<T>(new_item: T, key?: number) {
         const db = await this.db;
-        var t = db.transaction(["list"], "readwrite");
-        var store = t.objectStore("list");
 
-        var request = store.add(new_item);
+        // 寻找递增用的ID
+        if (!key) {
+            let quene_key = 0;
+            let t = db.transaction(["list"], "readwrite");
+            let store = t.objectStore("list");
+            let cursor = store.openCursor(IDBKeyRange.lowerBound(0), 'prev');
+            await new Promise((resolve, reject) => {
+                cursor.onsuccess = function (e) {
+                    let res: IDBCursorWithValue = e.target['result'];
+                    if (res) {
+                        quene_key = parseInt(res.key + "");
+                    }
+                    resolve();
+                }
+                cursor.onerror = reject;
+            });
+
+            let removed_ids = await this._getRemovedIds("list");
+            let max_removed_key = removed_ids[removed_ids.length - 1] || 0;
+            key = Math.max(quene_key, max_removed_key) + 1;
+        }
+
+        let t = db.transaction(["list"], "readwrite");
+        let store = t.objectStore("list");
+        var request = store.add(new_item, key);
         return new Promise<number>((resolve, reject) => {
             request.onerror = function (e) {
                 reject(e);
@@ -251,7 +273,47 @@ export class IndexedDBService {
             request.onerror = reject
         });
     }
+    async clear() {
+
+        const db = await this.db;
+        var t = db.transaction(["list", "deleted_ids"], "readwrite");
+        var list_store = t.objectStore("list");
+        var deleted_ids_store = t.objectStore("deleted_ids");
+        await Promise.all([
+            list_store.clear(),
+            deleted_ids_store.clear(),
+        ].map(request => {
+            return new Promise<number>((resolve, reject) => {
+                request.onsuccess = () => { resolve(request.result) };
+                request.onerror = reject
+            });
+        }));
+
+    }
+    async backup() {
+        var list = await this.getList();
+        var deleted_ids = await this._getRemovedIds("list");
+        return { list, deleted_ids };
+    }
+    async restore(backupData) {
+        await this.clear();
+        var {list, deleted_ids} = backupData;
+        for (var i = 0, len = list.length; i < len; i += 1) {
+            var item = list[i];
+            this.add(item, parseInt(item.id));
+        }
+        const db = await this.db;
+        var t = db.transaction(["deleted_ids"], "readwrite");
+        var deleted_ids_store = t.objectStore("deleted_ids");
+        var ob = deleted_ids_store.put(deleted_ids, 'list');
+
+        await new Promise((resolve, reject) => {
+            ob.onsuccess = resolve
+            ob.onerror = reject
+        });
+    }
 }
+
 
 export interface SearchResultWithWeight {
     weight?: number

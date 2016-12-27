@@ -3,3 +3,5 @@ dist
 .awcache
 YOMS-win32-x64
 YOMS-win32-x64.7z
+YOMS-win32-ia32
+YOMS-win32-ia32.7z

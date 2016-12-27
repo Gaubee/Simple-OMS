@@ -1,12 +1,32 @@
 <md-card>
   <p md-line>
-    settings works!
+    风格切换
   </p>
   <md-slide-toggle [(ngModel)]="_app.isDarkTheme">
     夜间模式
   </md-slide-toggle>
 </md-card>
-<md-card>
+<!--<md-card>
   <p md-line> 当前版本{{_app.version}}。 </p>
   <button md-raised-button>检查更新</button>
+</md-card>-->
+<md-card>
+  <md-card-title>数据备份与还原</md-card-title>
+    <md-grid-list *ngFor="let backup of backup_list" cols="6" rowHeight="32px">
+      <md-grid-tile>
+        <md-radio-group [(ngModel)]="selected_backup_hash" (ngModelChange)="selecteBackup()">
+          <md-radio-button [value]="backup.hash" [checked]="selected_backup_hash==backup.hash"></md-radio-button>
+        </md-radio-group>
+      </md-grid-tile>
+      <md-grid-tile colspan=2>{{backup.key}}</md-grid-tile>
+      <md-grid-tile colspan=2>{{backup.create_time|date:"yyyy-MM-dd hh:mm"}}</md-grid-tile>
+      <md-grid-tile><button (click)="removeBackup(backup.key)" md-icon-button><md-icon>delete</md-icon></button></md-grid-tile>
+    </md-grid-list>
+  <md-card-actions>
+    <button md-raised-button (click)="backupData()">备份</button>
+    <button md-raised-button (click)="restoreDB()" [disabled]="!selected_backup_hash">还原</button>
+  </md-card-actions>
+  <md-card-footer>
+    <md-progress-bar *ngIf="show_loading" mode="indeterminate"></md-progress-bar>
+  </md-card-footer>
 </md-card>

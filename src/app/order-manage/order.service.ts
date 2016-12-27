@@ -27,14 +27,23 @@ export interface OrderNode {
     type?: Category,
     material_id?: string,
     material?: Material,
+    color?: string,
 
     size_list: Size[];
 
     machining_remark?: string;
     machining_price?: number;
+    custom_material_price?:number;
 
     // 价格合计
     total_price?: number
+
+    // 计算类型
+    calcType?: CalcType
+}
+export enum CalcType {
+    面积,
+    长度,
 }
 
 export interface Size {
@@ -51,7 +60,8 @@ export const SIZE_DEFAULT: Size = {
 export const ORDERNODE_DEFAULT: OrderNode = {
     size_list: [SIZE_DEFAULT],
     machining_remark: "",
-    machining_price: 0
+    machining_price: 0,
+    calcType: CalcType.面积
 };
 export const ORDER_DEFAULT: Order = {
     customer: {
